@@ -8,30 +8,52 @@ using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace API_Digi_Key_Parser_new
 {
     public partial class Form1 : Form
     {
+        ApiClientSettings settings;
+        ApiClientService client;
+        int count = 0;
         private static readonly ILog _log = LogManager.GetLogger(typeof(Program));
 
         public Form1()
         {
             InitializeComponent();
+            ParserInit();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            var settings = ApiClientSettings.CreateFromConfigFile();
-            _log.DebugFormat(settings.ToString());
-            textBox1.AppendText(settings.ToString());
+            List<string> InputData = new List<string>();
+            ConnectToExcel ConnectToExcel = new ConnectToExcel(@"D:\TestExcel.xlsx");
+            ListOfPartNumbers ListOfPartNumbers = new ListOfPartNumbers(@"D:\TestExcel.xlsx");
+            InputData = ListOfPartNumbers.GetListOfPartNumbers();
+
+            for (int i = 0; i < InputData.Count; i++)
+            {
+                Task task = FindPartNumbers(InputData[i]);
+                await task;
+            }
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+        async void ParserInit()
+        {
             try
             {
+                settings = ApiClientSettings.CreateFromConfigFile();
+                client = new ApiClientService(settings);
                 if (settings.ExpirationDateTime < DateTime.Now)
                 {
                     // Let's refresh the token
@@ -53,21 +75,32 @@ namespace API_Digi_Key_Parser_new
                     textBox1.AppendText("After call to refresh" + Environment.NewLine);
                     textBox1.AppendText(settings.ToString());
                 }
-
-                var client = new ApiClientService(settings);
-                var response = await client.KeywordSearch("stm32f407vet6");    
-
-                // In order to pretty print the json object we need to do the following
-                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
-
-                textBox1.AppendText($"Reponse is {jsonFormatted} ");
             }
             catch (Exception)
             {
                 textBox1.AppendText("Exception...");
                 throw;
             }
+        }
+        async Task FindPartNumbers(string PartNumber)
+        {
+            try
+            { 
+                var response = await client.KeywordSearch(PartNumber);
 
+                // In order to pretty print the json object we need to do the following
+                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
+
+                int start = jsonFormatted.IndexOf("\"Value\": ");
+                int end = jsonFormatted.IndexOf('}');
+
+                textBox1.AppendText($"Reponse is {jsonFormatted.Substring(start, end - start)}" + Environment.NewLine);
+            }
+            catch (Exception)
+            {
+                textBox1.AppendText("Exception...");
+                throw;
+            }
         }
     }
 }

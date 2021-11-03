@@ -63,6 +63,7 @@ namespace API_Digi_Key_Parser_new
             this.button2.TabIndex = 2;
             this.button2.Text = "Close File\'s";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // progressBar1
             // 
