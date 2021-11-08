@@ -60,7 +60,7 @@ namespace API_Digi_Key_Parser_new
                 throw;
             }
         }
-        public async Task<string> FindPartNumbers(string PartNumber)
+        public async Task<string> FindDescriprions(string PartNumber)
         {
             try
             {
