@@ -11,6 +11,19 @@ namespace API_Digi_Key_Parser_new
     {
         public string _pathExcelFile;
         public ExcelQueryFactory _urlConnexion;
+        private List<string> nameWorksheet;
+
+        public List<string> NameWorksheet
+        {
+            get
+            {
+                return nameWorksheet;
+            }
+            private set
+            {
+                nameWorksheet = value;
+            }
+        }
         public ConnectToExcel(string path)
         {
             this._pathExcelFile = path;
@@ -29,6 +42,18 @@ namespace API_Digi_Key_Parser_new
             {
                 return _urlConnexion;
             }
+        }
+
+        public List<string> GetWorksheetNames(ConnectToExcel ConxObject)
+        {
+            List<string> MassWorksheetNames = new List<string>();
+            var worksheetNames = ConxObject.UrlConnexion.GetWorksheetNames();
+            foreach(var result in worksheetNames)
+            {
+                MassWorksheetNames.Add(result);
+            }
+        
+            return MassWorksheetNames;
         }
     }
 }
