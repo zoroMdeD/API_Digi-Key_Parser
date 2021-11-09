@@ -69,10 +69,13 @@ namespace API_Digi_Key_Parser_new
                 // In order to pretty print the json object we need to do the following
                 var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
-                int start = jsonFormatted.IndexOf("\"Value\": ");
+                string s = "\"Value\": ";
+                char[] charToTrim = { ' ', '\n' };
+                int start = jsonFormatted.IndexOf(s);
                 int end = jsonFormatted.IndexOf('}');
 
-                return $"Reponse is {jsonFormatted.Substring(start, end - start)}";
+
+                return $"Reponse is {(jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim)}";
             }
             catch (Exception e)
             {
