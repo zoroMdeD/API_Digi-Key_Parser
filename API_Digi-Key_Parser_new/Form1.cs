@@ -32,31 +32,15 @@ namespace API_Digi_Key_Parser_new
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            label1.Text = "No file selected";
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            if (toolStripTextBox1.TextLength > 1)
+            if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
             {
-                ConnectToExcel = new ConnectToExcel(@Path);
-                ConxObject = new ConnectToExcel(@Path);
-                InputNameSheets = ConnectToExcel.GetWorksheetNames(ConxObject);
-                ListOfPartNumbers ListOfPartNumbers = new ListOfPartNumbers(@Path, InputNameSheets[0]);
-                InputDesc = ListOfPartNumbers.GetListOfPartNumbers(ConxObject);
-                MassDescription = new string[InputDesc.Count];
-
-                Parser = new Parser();
-                Task task = Parser.ParserInit();
-                await task;
-
-                // since this is a UI event, instantiating the Progress class
-                // here will capture the UI thread context
-                var progress = new Progress<int>(i => progressBar1.Value = i);
-                progressBar1.Minimum = 0;
-                progressBar1.Maximum = InputDesc.Count - 1;
-                // pass this instance to the background task
-                _ = OutData(progress);
+                label1.Text = "Processing...";
+                TaskRun(Path);
             }
             else
             {
@@ -128,6 +112,35 @@ namespace API_Digi_Key_Parser_new
             about_program.ShowDialog();
         }
 
+        async void TaskRun(string Path)
+        {
+            try
+            {
+                ConnectToExcel = new ConnectToExcel(@Path);
+                ConxObject = new ConnectToExcel(@Path);
+                InputNameSheets = ConnectToExcel.GetWorksheetNames(ConxObject);
+                ListOfPartNumbers ListOfPartNumbers = new ListOfPartNumbers(@Path, InputNameSheets[0]);
+                InputDesc = ListOfPartNumbers.GetListOfPartNumbers(ConxObject);
+                MassDescription = new string[InputDesc.Count];
+
+                Parser = new Parser();
+                Task task = Parser.ParserInit();
+                await task;
+
+                // since this is a UI event, instantiating the Progress class
+                // here will capture the UI thread context
+                var progress = new Progress<int>(i => progressBar1.Value = i);
+                progressBar1.Minimum = 0;
+                progressBar1.Maximum = InputDesc.Count - 1;
+                // pass this instance to the background task
+                _ = OutData(progress);
+            }
+            catch(Exception e)
+            {
+                textBox1.AppendText(e.Message);
+            }
+        }
+
         async Task OutData(IProgress<int> p)
         {
             for (int i = 0; i < InputDesc.Count; i++)
@@ -136,6 +149,7 @@ namespace API_Digi_Key_Parser_new
                 textBox1.AppendText(MassDescription[i] + Environment.NewLine);
                 p.Report(i);
             }
+            label1.Text = "Completed";
         }
         string Open_dialog()
         {
@@ -144,6 +158,7 @@ namespace API_Digi_Key_Parser_new
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Path = openFileDialog1.FileName;
+                label1.Text = "File selected";
             }
             return Path;
         }

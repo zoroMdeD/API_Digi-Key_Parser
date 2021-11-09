@@ -74,7 +74,6 @@ namespace API_Digi_Key_Parser_new
                 int start = jsonFormatted.IndexOf(s);
                 int end = jsonFormatted.IndexOf('}');
 
-
                 return $"Reponse is {(jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim)}";
             }
             catch (Exception e)
