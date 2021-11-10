@@ -62,11 +62,11 @@ namespace API_Digi_Key_Parser_new
 
         }
 
-        public List<string> GetListOfPartNumbers(ConnectToExcel ConxObject)
+        public List<string> GetListOfPartNumbers(ConnectToExcel ConnectToExcel)
         {
             MassPartNumber = new List<string>();
             //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConxObject.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
                            select a;
             foreach (var result in GetSheet)
             {

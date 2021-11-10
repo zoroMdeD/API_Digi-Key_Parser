@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Reflection;
 
 namespace API_Digi_Key_Parser_new
 {
@@ -70,17 +72,16 @@ namespace API_Digi_Key_Parser_new
                 var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
                 string s = "\"Value\": ";
-                char[] charToTrim = { ' ', '\n' };
+                char[] charToTrim = { ' ', '\n', '"' };
                 int start = jsonFormatted.IndexOf(s);
                 int end = jsonFormatted.IndexOf('}');
 
-                return $"Reponse is {(jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim)}";
+                return (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
             }
             catch (Exception e)
             {
                 return e.Message;
             }
         }
-
     }
 }

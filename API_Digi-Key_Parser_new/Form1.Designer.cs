@@ -103,7 +103,7 @@ namespace API_Digi_Key_Parser_new
             // 
             // toolStripTextBox1
             // 
-            this.toolStripTextBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStripTextBox1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.ReadOnly = true;
             this.toolStripTextBox1.Size = new System.Drawing.Size(150, 23);
