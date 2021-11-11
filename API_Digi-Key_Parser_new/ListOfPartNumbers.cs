@@ -51,6 +51,11 @@ namespace API_Digi_Key_Parser_new
             get;
             set;
         }
+        public string PartNumberPass
+        {
+            get;
+            set;
+        }
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
         {
@@ -73,6 +78,23 @@ namespace API_Digi_Key_Parser_new
                 MassPartNumber.Add(result.PartNumber);
             }
             return MassPartNumber;
+        }
+
+        public bool GetListOfPartNumbersPass(ConnectToExcel ConnectToExcel, string Family)
+        {
+            bool match = false;
+            //Query a worksheet with a header row (sintax SQL-Like LINQ)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                           select a;
+            foreach (var result in GetSheet)
+            {
+                if(Family == result.PartNumberPass)
+                {
+                    match = true;
+                    break;
+                }
+            }
+            return match;
         }
     }
 }

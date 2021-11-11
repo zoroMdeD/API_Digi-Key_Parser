@@ -12,20 +12,29 @@ using System.Collections.Generic;
 using System.Threading;
 using System.ComponentModel;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
 
 namespace API_Digi_Key_Parser_new
 {
     public partial class Form1 : Form
     {
-        string Path = string.Empty;
+        string PathInfoPartNumbers = string.Empty;
+        string PathInfoPartNumberPass = string.Empty;
+        string PathInfoEngineers = string.Empty;
+        string PathInfoAdapters = string.Empty;
+        string PathInfoMotherBoard = string.Empty;
+
         AboutBox1 about_program = new AboutBox1();
         List<string> InputNameSheets = new List<string>();
         List<string> InputDesc = new List<string>();
         string[] MassDescription;
         string[] MassPackage;
         string[] MassTmp;
+        string[] allFoundFiles;
         ConnectToExcel ConnectToExcel;
         Parser Parser;
+
+        public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
 
         public Form1()
         {
@@ -42,7 +51,7 @@ namespace API_Digi_Key_Parser_new
             if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
             {
                 label1.Text = "Processing...";
-                TaskRun(Path);
+                TaskRun(PathInfoPartNumbers);
             }
             else
             {
@@ -141,6 +150,7 @@ namespace API_Digi_Key_Parser_new
         private void pathToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toolStripTextBox1.Text = Open_dialog();
+            FindAllFileOnLocalServer();
         }
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -151,7 +161,7 @@ namespace API_Digi_Key_Parser_new
             if (toolStripTextBox1.TextLength > 1)
             {
                 label1.Text = "Processing...";
-                TaskRun(Path);
+                TaskRun(PathInfoPartNumbers);
             }
             else
             {
@@ -162,15 +172,19 @@ namespace API_Digi_Key_Parser_new
 
         private void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (toolStripTextBox1.TextLength > 1)
-            {
 
-            }
-            else
-            {
-                DialogResult result;
-                result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            }
+            FindAllFileOnLocalServer();
+
+            //for debug
+            //if (toolStripTextBox1.TextLength > 1)
+            //{
+            //
+            //}
+            //else
+            //{
+            //    DialogResult result;
+            //    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            //}
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -245,11 +259,39 @@ namespace API_Digi_Key_Parser_new
             openFileDialog1.FileName = "Some File";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                Path = openFileDialog1.FileName;
+                PathInfoPartNumbers = openFileDialog1.FileName;
                 label1.Text = "File selected";
             }
-            return Path;
+            return PathInfoPartNumbers;
         }
 
+        void FindAllFileOnLocalServer()
+        {
+            Thread Thread_One = new Thread(new ThreadStart(Thread_ReadFileLocalServ));                //Создаем новый объект потока (Thread)
+            Thread_One.IsBackground = true;                                                           //Поток является фоновым
+            Thread_One.Start();                                                                       //запускаем поток
+        }
+        void Thread_ReadFileLocalServ()
+        {
+            allFoundFiles = Directory.GetDirectories(@"X:\DataBase\Test\", "Test_API_DigiKey", SearchOption.AllDirectories);
+            BeginInvoke(new MyDelegate(test1));
+            //textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+            RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(allFoundFiles);
+            RecursiveFileProcessor.RunProcessor(RecursiveFileProcessor.GetPath);
+
+            foreach (string item in RecursiveFileProcessor.OutPath)
+            {
+                BeginInvoke(new MyDelegate(test2));
+                //textBox1.AppendText(item + Environment.NewLine);    //for debug
+            }
+        }
+        void test1()
+        {
+            textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+        }
+        void test2()
+        {
+            //RecursiveFileProcessor.OutPath[0];
+        }
     }
 }
