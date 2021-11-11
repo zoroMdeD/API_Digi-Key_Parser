@@ -66,17 +66,45 @@ namespace API_Digi_Key_Parser_new
         {
             try
             {
-                var response = await client.KeywordSearch(PartNumber);
+                string Family;
+                string Package;
+                string FamilyPackage;
 
+                var response = await client.KeywordSearch(PartNumber);
                 // In order to pretty print the json object we need to do the following
                 var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
+                //Find Family
                 string s = "\"Value\": ";
-                char[] charToTrim = { ' ', '\n', '"' };
+                char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
                 int start = jsonFormatted.IndexOf(s);
                 int end = jsonFormatted.IndexOf('}');
 
-                return (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+
+                if (Family != "Out of Bounds")
+                {
+                    //Find Package/Case
+                    s = "\"Parameter\": \"Package / Case\",";
+                    start = jsonFormatted.IndexOf(s);
+                    end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
+
+                    Package = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                    
+                    s = "\"Value\": ";
+                    start = Package.IndexOf(s);
+                    end = Package.IndexOf('}');
+
+                    Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+
+                    FamilyPackage = Family + "#" + Package;
+
+                    return FamilyPackage;
+                }
+                else
+                {
+                    return "null";
+                }
             }
             catch (Exception e)
             {

@@ -22,6 +22,8 @@ namespace API_Digi_Key_Parser_new
         List<string> InputNameSheets = new List<string>();
         List<string> InputDesc = new List<string>();
         string[] MassDescription;
+        string[] MassPackage;
+        string[] MassTmp;
         ConnectToExcel ConnectToExcel;
         Parser Parser;
 
@@ -192,11 +194,12 @@ namespace API_Digi_Key_Parser_new
             try
             {
                 ConnectToExcel = new ConnectToExcel(@Path);
-                //ConxObject = new ConnectToExcel(@Path);
                 InputNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
                 ListOfPartNumbers ListOfPartNumbers = new ListOfPartNumbers(@Path, InputNameSheets[0]);
                 InputDesc = ListOfPartNumbers.GetListOfPartNumbers(ConnectToExcel);
+                MassTmp = new string[InputDesc.Count];
                 MassDescription = new string[InputDesc.Count];
+                MassPackage = new string[InputDesc.Count];
 
                 Parser = new Parser();
                 Task task = Parser.ParserInit();
@@ -219,8 +222,19 @@ namespace API_Digi_Key_Parser_new
         {
             for (int i = 0; i < InputDesc.Count; i++)
             {
-                MassDescription[i] = await Parser.FindDescriprions(InputDesc[i]);
-                textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
+                MassTmp[i] = await Parser.FindDescriprions(InputDesc[i]);
+                if (MassTmp[i].IndexOf('#') > 0)
+                {
+                    MassDescription[i] = MassTmp[i].Substring(0, MassTmp[i].IndexOf('#'));
+                    MassPackage[i] = MassTmp[i].Substring(MassTmp[i].IndexOf('#'));
+                    textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
+                }
+                else
+                {
+                    MassDescription[i] = MassTmp[i];
+                    MassPackage[i] = "null";
+                    textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
+                }
                 p.Report(i);
             }
             label1.Text = "Completed";
