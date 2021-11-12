@@ -29,3 +29,10 @@ D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug\Remotion.dll
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug\Remotion.Interfaces.dll
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug\LinqToExcel.xml
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi_Key_Parser_new.AboutBox1.resources
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug\API_Digi-Key_Parser_new.exe.manifest
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\bin\Debug\API_Digi-Key_Parser_new.application
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi-Key_Parser_new.exe.manifest
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi-Key_Parser_new.application
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\Interop.Office.dll
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi-Key_Parser_new.csproj.ResolveComReference.cache

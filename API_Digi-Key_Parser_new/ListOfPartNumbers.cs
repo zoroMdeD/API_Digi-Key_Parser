@@ -8,8 +8,9 @@ namespace API_Digi_Key_Parser_new
 {
     class ListOfPartNumbers
     {
-        private string pathToExcelFile = "none";
-        private string nameOfSheet = "none";
+        private string pathToExcelFile = string.Empty;
+        private string nameOfSheet = string.Empty;
+        private List<string> massPartNumber;
 
         public string PathToExcelFile
         {
@@ -33,7 +34,24 @@ namespace API_Digi_Key_Parser_new
                 nameOfSheet = value;
             }
         }
+        public List<string> MassPartNumber
+        {
+            get
+            {
+                return massPartNumber;
+            }
+            private set
+            {
+                massPartNumber = value;
+            }
+        }
+
         public string PartNumber
+        {
+            get;
+            set;
+        }
+        public string PartNumberPass
         {
             get;
             set;
@@ -48,18 +66,35 @@ namespace API_Digi_Key_Parser_new
         {
 
         }
-        public List<string> GetListOfPartNumbers()
+
+        public List<string> GetListOfPartNumbers(ConnectToExcel ConnectToExcel)
         {
-            List<string> MassPartNumber = new List<string>();
-            ConnectToExcel ConxObject = new ConnectToExcel(pathToExcelFile);
+            MassPartNumber = new List<string>();
             //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConxObject.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
                            select a;
             foreach (var result in GetSheet)
             {
                 MassPartNumber.Add(result.PartNumber);
             }
             return MassPartNumber;
+        }
+
+        public bool GetListOfPartNumbersPass(ConnectToExcel ConnectToExcel, string Family)
+        {
+            bool match = false;
+            //Query a worksheet with a header row (sintax SQL-Like LINQ)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                           select a;
+            foreach (var result in GetSheet)
+            {
+                if(Family == result.PartNumberPass)
+                {
+                    match = true;
+                    break;
+                }
+            }
+            return match;
         }
     }
 }
