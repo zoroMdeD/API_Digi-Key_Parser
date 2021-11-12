@@ -46,16 +46,22 @@ namespace API_Digi_Key_Parser_new
             }
         }
 
-        public string PartNumber
+        public string PartNumber    //Исходники
         {
             get;
             set;
         }
-        public string PartNumberPass
+        public string PartNumberPass    //Проверка на пассивку
         {
             get;
             set;
         }
+        //Для поиска адаптеров
+        //public string BuildNumber    
+        //{
+        //    get;
+        //    set;
+        //}
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
         {
@@ -67,7 +73,7 @@ namespace API_Digi_Key_Parser_new
 
         }
 
-        public List<string> GetListOfPartNumbers(ConnectToExcel ConnectToExcel)
+        public List<string> GetListInfoExcelDoc(ConnectToExcel ConnectToExcel)
         {
             MassPartNumber = new List<string>();
             //Query a worksheet with a header row (sintax SQL-Like LINQ)
@@ -80,7 +86,7 @@ namespace API_Digi_Key_Parser_new
             return MassPartNumber;
         }
 
-        public bool GetListOfPartNumbersPass(ConnectToExcel ConnectToExcel, string Family)
+        public bool GetListInfoExcelDoc(ConnectToExcel ConnectToExcel, string Family)
         {
             bool match = false;
             //Query a worksheet with a header row (sintax SQL-Like LINQ)

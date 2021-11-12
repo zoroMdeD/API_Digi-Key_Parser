@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API_Digi_Key_Parser_new
 {
-    class ConnectToExcel
+    public class ConnectToExcel
     {
         public string _pathExcelFile;
         public ExcelQueryFactory _urlConnexion;
@@ -44,7 +44,7 @@ namespace API_Digi_Key_Parser_new
             }
         }
 
-        public List<string> GetWorksheetNames(ConnectToExcel ConxObject)
+        public static List<string> GetWorksheetNames(ConnectToExcel ConxObject)
         {
             List<string> MassWorksheetNames = new List<string>();
             var worksheetNames = ConxObject.UrlConnexion.GetWorksheetNames();

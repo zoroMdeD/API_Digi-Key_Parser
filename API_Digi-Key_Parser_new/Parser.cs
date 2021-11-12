@@ -17,6 +17,8 @@ namespace API_Digi_Key_Parser_new
     public class Parser
     {
         private string partNumber = string.Empty;
+        private string path = string.Empty;
+
         private ApiClientSettings settings;
         private ApiClientService client;
 
@@ -31,7 +33,22 @@ namespace API_Digi_Key_Parser_new
                 partNumber = value;
             }
         }
+        public string Path
+        {
+            get
+            {
+                return path;
+            }
+            private set
+            {
+                path = value;
+            }
+        }
 
+        public Parser(string path)
+        {
+            this.path = path;
+        }
         public Parser()
         {
 
@@ -82,28 +99,39 @@ namespace API_Digi_Key_Parser_new
 
                 Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
 
-                if (Family != "Out of Bounds")
+                //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
+                ActionWithExcel ActionWithExcel = new ActionWithExcel();
+                bool check = ActionWithExcel.UpdateExcelDoc(Path, 0, Family);
+
+                if (!check)
                 {
-                    //Find Package/Case
-                    s = "\"Parameter\": \"Package / Case\",";
-                    start = jsonFormatted.IndexOf(s);
-                    end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
+                    if (Family != "Out of Bounds")
+                    {
+                        //Find Package/Case
+                        s = "\"Parameter\": \"Package / Case\",";
+                        start = jsonFormatted.IndexOf(s);
+                        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
 
-                    Package = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
-                    
-                    s = "\"Value\": ";
-                    start = Package.IndexOf(s);
-                    end = Package.IndexOf('}');
+                        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
 
-                    Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                        s = "\"Value\": ";
+                        start = Package.IndexOf(s);
+                        end = Package.IndexOf('}');
 
-                    FamilyPackage = Family + "#" + Package;
+                        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
 
-                    return FamilyPackage;
+                        FamilyPackage = Family + "#" + Package;
+
+                        return FamilyPackage;
+                    }
+                    else
+                    {
+                        return "null";
+                    }
                 }
-                else
+                else 
                 {
-                    return "null";
+                    return Family;
                 }
             }
             catch (Exception e)

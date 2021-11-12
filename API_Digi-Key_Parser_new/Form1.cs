@@ -31,7 +31,6 @@ namespace API_Digi_Key_Parser_new
         string[] MassPackage;
         string[] MassTmp;
         string[] allFoundFiles;
-        ConnectToExcel ConnectToExcel;
         Parser Parser;
 
         public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
@@ -207,17 +206,16 @@ namespace API_Digi_Key_Parser_new
         {
             try
             {
-                ConnectToExcel = new ConnectToExcel(@Path);
-                InputNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-                ListOfPartNumbers ListOfPartNumbers = new ListOfPartNumbers(@Path, InputNameSheets[0]);
-                InputDesc = ListOfPartNumbers.GetListOfPartNumbers(ConnectToExcel);
+                Parser = new Parser(@"D:\InfoPartNumberPass.xlsx");     //Путь для файла должен быть динамическим!!!
+                Task task = Parser.ParserInit();
+                await task;
+
+                ActionWithExcel ActionWithExcel = new ActionWithExcel();
+                InputDesc = ActionWithExcel.UpdateExcelDoc(Path, 0);
+
                 MassTmp = new string[InputDesc.Count];
                 MassDescription = new string[InputDesc.Count];
                 MassPackage = new string[InputDesc.Count];
-
-                Parser = new Parser();
-                Task task = Parser.ParserInit();
-                await task;
 
                 // since this is a UI event, instantiating the Progress class
                 // here will capture the UI thread context
