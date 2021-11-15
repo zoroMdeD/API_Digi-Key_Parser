@@ -36,3 +36,4 @@ D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi-Key_Parser_new.application
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\Interop.Office.dll
 D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\API_Digi-Key_Parser_new.csproj.ResolveComReference.cache
+D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\obj\Debug\Interop.Shell32.dll

@@ -18,19 +18,23 @@ namespace API_Digi_Key_Parser_new
 {
     public partial class Form1 : Form
     {
+        string[] MassPathFile;  //Массив путей к файлам
+
         string PathInfoPartNumbers = string.Empty;
         string PathInfoPartNumberPass = string.Empty;
         string PathInfoEngineers = string.Empty;
         string PathInfoAdapters = string.Empty;
         string PathInfoMotherBoard = string.Empty;
 
+        bool CheckBtnWrkSlt = false;
+        bool CheckBtnParsing = false;
         AboutBox1 about_program = new AboutBox1();
         List<string> InputNameSheets = new List<string>();
         List<string> InputDesc = new List<string>();
         string[] MassDescription;
         string[] MassPackage;
         string[] MassTmp;
-        string[] allFoundFiles;
+        string[] allFoundFiles = new string[1];
         Parser Parser;
 
         public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
@@ -47,15 +51,31 @@ namespace API_Digi_Key_Parser_new
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
+            if (!CheckBtnParsing)   //Checking tap button "Parsing"
             {
-                label1.Text = "Processing...";
-                TaskRun(PathInfoPartNumbers);
-            }
-            else
-            {
-                DialogResult result;
-                result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
+                {
+                    //if ((toolStripTextBox4.TextLength > 1) || (teststr.Contains("\\Test_API_DigiKey")))   //System.NullReferenceException
+                    if (allFoundFiles[0].Contains("\\Test_API_DigiKey"))
+                    {
+                        oAuthToolStripMenuItem.Enabled = false;
+                        saveToolStripMenuItem.Enabled = false;
+                        pathToolStripMenuItem.Enabled = false;
+                        CheckBtnParsing = true;
+                        label1.Text = "Processing...";
+                        TaskRun(PathInfoPartNumbers);
+                    }
+                    else
+                    {
+                        DialogResult result;
+                        result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    }
+                }
+                else
+                {
+                    DialogResult result;
+                    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
             }
         }
 
@@ -148,8 +168,90 @@ namespace API_Digi_Key_Parser_new
         }
         private void pathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            toolStripTextBox1.Text = Open_dialog();
-            FindAllFileOnLocalServer();
+            if (!CheckBtnWrkSlt)
+            {
+                CheckBtnWrkSlt = true;
+                GetPathDirectory();
+                Thread.Sleep(500);
+                toolStripTextBox1.Text = Open_dialog();
+                FindAllFileOnLocalServer(toolStripTextBox4.Text);
+            }
+            else
+            {
+                DialogResult result;
+                result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+        }
+        string Open_dialog()
+        {
+            openFileDialog1.Filter = "Excel files (*.xls;*.xlsx;)|*.xls;*.xlsx";
+            openFileDialog1.FileName = "Select a some file";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                PathInfoPartNumbers = openFileDialog1.FileName;
+                label1.Text = "File selected";
+            }
+            return PathInfoPartNumbers;
+        }
+        void FindAllFileOnLocalServer(string strThread)
+        {
+            Thread Thread_One = new Thread(new ParameterizedThreadStart(Thread_ReadFileLocalServ));                //Создаем новый объект потока (Thread)
+            Thread_One.IsBackground = true;                                                           //Поток является фоновым
+            Thread_One.Start(strThread);                                                                       //запускаем поток
+        }
+        void Thread_ReadFileLocalServ(object s)
+        {
+            string strPath = (string)s;
+            try
+            {
+                int ienum = 0;
+                allFoundFiles[0] = @strPath;//Directory.GetDirectories(@strPath);//, "Test_API_DigiKey", SearchOption.AllDirectories);
+                BeginInvoke(new MyDelegate(CheckCorrectPath));
+                //textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+                RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(allFoundFiles);
+                RecursiveFileProcessor.RunProcessor(RecursiveFileProcessor.GetPath);
+                MassPathFile = new string[RecursiveFileProcessor.OutPath.Count];
+                foreach (string item in RecursiveFileProcessor.OutPath)
+                {
+                    MassPathFile[ienum] = GetLnkTarget(RecursiveFileProcessor.OutPath[ienum]);
+                    ienum++;
+                    //textBox1.AppendText(item + Environment.NewLine);    //for debug
+                }
+                CheckBtnWrkSlt = false;
+            }
+            catch(Exception)
+            { 
+                ; 
+            }
+            //BeginInvoke(new MyDelegate(test2));
+        }
+        public static string GetLnkTarget(string lnkPath)   //Method get path an link
+        {
+            var shl = new Shell32.Shell();         // Move this to class scope
+            lnkPath = Path.GetFullPath(lnkPath);
+            var dir = shl.NameSpace(Path.GetDirectoryName(lnkPath));
+            var itm = dir.Items().Item(Path.GetFileName(lnkPath));
+            var lnk = (Shell32.ShellLinkObject)itm.GetLink;
+            return lnk.Target.Path;
+        }
+        void CheckCorrectPath()
+        {
+            if (allFoundFiles.Length > 0)
+                textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+            else
+            {
+                DialogResult result;
+                result = MessageBox.Show("The working directory was not found in the selected directory!", "Invalid directory", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+        }
+        string FindPathToFile(string name)
+        {
+            for (int i = 0; i < MassPathFile.Length; i++)
+            {
+                if (MassPathFile[i].Contains(name))
+                    return MassPathFile[i];
+            }
+            return "null";
         }
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -157,33 +259,44 @@ namespace API_Digi_Key_Parser_new
         }
         private void parsingToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!CheckBtnParsing)   //Checking tap button "Parsing"
+            {
+                if (toolStripTextBox1.TextLength > 1)
+                {
+                    if (toolStripTextBox4.TextLength > 1)   //System.NullReferenceException
+                    {
+                        oAuthToolStripMenuItem.Enabled = false;
+                        saveToolStripMenuItem.Enabled = false;
+                        pathToolStripMenuItem.Enabled = false;
+                        CheckBtnParsing = true;
+                        label1.Text = "Processing...";
+                        TaskRun(PathInfoPartNumbers);
+                    }
+                    else
+                    {
+                        DialogResult result;
+                        result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    }
+                }
+                else
+                {
+                    DialogResult result;
+                    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+            }
+        }
+
+        private void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             if (toolStripTextBox1.TextLength > 1)
             {
-                label1.Text = "Processing...";
-                TaskRun(PathInfoPartNumbers);
+            
             }
             else
             {
                 DialogResult result;
                 result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
-        }
-
-        private void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            FindAllFileOnLocalServer();
-
-            //for debug
-            //if (toolStripTextBox1.TextLength > 1)
-            //{
-            //
-            //}
-            //else
-            //{
-            //    DialogResult result;
-            //    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            //}
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -202,11 +315,22 @@ namespace API_Digi_Key_Parser_new
         {
             about_program.ShowDialog();
         }
+        void GetPathDirectory()
+        {
+            openFileDialog1.ValidateNames = false;
+            openFileDialog1.CheckFileExists = false;
+            openFileDialog1.CheckPathExists = true;
+            openFileDialog1.FileName = "Select a some directory";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                toolStripTextBox4.Text = Path.GetDirectoryName(openFileDialog1.FileName);
+            }
+        }
         async void TaskRun(string Path)
         {
             try
             {
-                Parser = new Parser(@"D:\InfoPartNumberPass.xlsx");     //Путь для файла должен быть динамическим!!!
+                Parser = new Parser(FindPathToFile(@"\InfoPartNumberPass.xlsx"));     //Путь для файла должен быть динамическим!!!
                 Task task = Parser.ParserInit();
                 await task;
 
@@ -250,46 +374,10 @@ namespace API_Digi_Key_Parser_new
                 p.Report(i);
             }
             label1.Text = "Completed";
-        }
-        string Open_dialog()
-        {
-            openFileDialog1.Filter = "Excel files (*.xls;*.xlsx;)|*.xls;*.xlsx";
-            openFileDialog1.FileName = "Some File";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                PathInfoPartNumbers = openFileDialog1.FileName;
-                label1.Text = "File selected";
-            }
-            return PathInfoPartNumbers;
-        }
-
-        void FindAllFileOnLocalServer()
-        {
-            Thread Thread_One = new Thread(new ThreadStart(Thread_ReadFileLocalServ));                //Создаем новый объект потока (Thread)
-            Thread_One.IsBackground = true;                                                           //Поток является фоновым
-            Thread_One.Start();                                                                       //запускаем поток
-        }
-        void Thread_ReadFileLocalServ()
-        {
-            allFoundFiles = Directory.GetDirectories(@"X:\DataBase\Test\", "Test_API_DigiKey", SearchOption.AllDirectories);
-            BeginInvoke(new MyDelegate(test1));
-            //textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
-            RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(allFoundFiles);
-            RecursiveFileProcessor.RunProcessor(RecursiveFileProcessor.GetPath);
-
-            foreach (string item in RecursiveFileProcessor.OutPath)
-            {
-                BeginInvoke(new MyDelegate(test2));
-                //textBox1.AppendText(item + Environment.NewLine);    //for debug
-            }
-        }
-        void test1()
-        {
-            textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
-        }
-        void test2()
-        {
-            //RecursiveFileProcessor.OutPath[0];
+            CheckBtnParsing = false;
+            oAuthToolStripMenuItem.Enabled = true;
+            saveToolStripMenuItem.Enabled = true;
+            pathToolStripMenuItem.Enabled = true;
         }
     }
 }

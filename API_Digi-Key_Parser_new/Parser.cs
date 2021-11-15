@@ -103,7 +103,7 @@ namespace API_Digi_Key_Parser_new
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
                 bool check = ActionWithExcel.UpdateExcelDoc(Path, 0, Family);
 
-                if (!check)
+                if (!check) //Checking for passive components
                 {
                     if (Family != "Out of Bounds")
                     {

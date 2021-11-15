@@ -85,7 +85,7 @@ namespace API_Digi_Key_Parser_new
             }
             return MassPartNumber;
         }
-
+        //Method checking for passive components
         public bool GetListInfoExcelDoc(ConnectToExcel ConnectToExcel, string Family)
         {
             bool match = false;
