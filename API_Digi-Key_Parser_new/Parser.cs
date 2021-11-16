@@ -133,10 +133,8 @@ namespace API_Digi_Key_Parser_new
                     getPassiveComponents.Add("Passive");
                 else
                     getPassiveComponents.Add("null");
-
-                string checkUniversalEquipment = ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family);    //Checking for universal equipment
-                getUniversalEquipment.Add(checkUniversalEquipment);
-
+  
+                getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
 
                 if (!checkPassiveComponent) //Checking for passive components
                 {

@@ -107,6 +107,16 @@ namespace API_Digi_Key_Parser_new
             {
                 workSheet.Cells[j, 3] = MassPackage[i];
             }
+            for (int i = 0, j = 2; i < Parser.GetPassiveComponents.Count; i++, j++)               // Заполняем наименование микросхем (4-й,5-й столбцы), частично
+            {
+                workSheet.Cells[j, 4] = Parser.GetPassiveComponents[i];
+                workSheet.Cells[j, 5] = Parser.GetPassiveComponents[i];
+            }
+            for (int i = 0, j = 2; i < Parser.GetUniversalEquipment.Count; i++, j++)               // Заполняем наименование микросхем (4-й столбец), частично
+            {
+                workSheet.Cells[j, 4] = Parser.GetUniversalEquipment[i];
+            }
+
 
             workSheet.Columns.EntireColumn.AutoFit();
             excelApp.Visible = true;                    // Открываем созданный excel-файл
