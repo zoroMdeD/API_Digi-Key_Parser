@@ -16,13 +16,14 @@ namespace API_Digi_Key_Parser_new
 {
     public class Parser
     {
-        private string partNumber = string.Empty;
+        private List<string> partNumber = new List<string>();
         private string path = string.Empty;
+        private Dictionary<string, string> getPassiveComponents = new Dictionary<string, string>();
 
         private ApiClientSettings settings;
         private ApiClientService client;
 
-        public string PartNumber
+        public List<string> PartNumber
         {
             get
             {
@@ -42,6 +43,17 @@ namespace API_Digi_Key_Parser_new
             private set
             {
                 path = value;
+            }
+        }
+        public Dictionary<string, string> GetPassiveComponents
+        {
+            get
+            {
+                return getPassiveComponents;
+            }
+            private set
+            {
+                getPassiveComponents = value;
             }
         }
 
@@ -79,15 +91,16 @@ namespace API_Digi_Key_Parser_new
                 throw;
             }
         }
-        public async Task<string> FindDescriprions(string PartNumber)
+        public async Task<string> FindDescriprions(string partNumber)
         {
             try
             {
+                this.partNumber.Add(partNumber);
                 string Family;
                 string Package;
                 string FamilyPackage;
 
-                var response = await client.KeywordSearch(PartNumber);
+                var response = await client.KeywordSearch(partNumber);
                 // In order to pretty print the json object we need to do the following
                 var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
@@ -103,10 +116,9 @@ namespace API_Digi_Key_Parser_new
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
                 bool check = ActionWithExcel.UpdateExcelDoc(Path, 0, Family);
 
-                //Завести массив/список для хранения статуса на пассивность текущего партномера (запрашивать его при необходимости)
-
                 if (!check) //Checking for passive components
                 {
+                    getPassiveComponents.Add(partNumber, "Not passive");
                     if (Family != "Out of Bounds")
                     {
                         //Find Package/Case
@@ -133,6 +145,8 @@ namespace API_Digi_Key_Parser_new
                 }
                 else 
                 {
+                    //Завести массив/список для хранения статуса на пассивность текущего партномера (запрашивать его при необходимости)
+                    getPassiveComponents.Add(partNumber, "Passive");
                     return Family;
                 }
             }
