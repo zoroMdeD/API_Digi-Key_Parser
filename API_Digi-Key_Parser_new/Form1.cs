@@ -21,10 +21,6 @@ namespace API_Digi_Key_Parser_new
         string[] MassPathFile;  //Массив путей к файлам
 
         string PathInfoPartNumbers = string.Empty;
-        string PathInfoPartNumberPass = string.Empty;
-        string PathInfoEngineers = string.Empty;
-        string PathInfoAdapters = string.Empty;
-        string PathInfoMotherBoard = string.Empty;
 
         bool CheckBtnWrkSlt = false;
         bool CheckBtnParsing = false;
@@ -81,90 +77,40 @@ namespace API_Digi_Key_Parser_new
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string[] MassDesc = new string[] { "Temperature Sensors - Analog and Digital Output"
-                                             , "Out of Bounds", "Memory"
-                                             , "Memory"
-                                             , "Embedded - Microcontrollers"
-                                             , "Clock/Timing - Clock Generators, PLLs, Frequency Synthesizers"
-                                             , "Memory"
-                                             , "DC DC Converters"
-                                             , "Memory"
-                                             , "Out of Bounds"
-                                             , "RF Amplifiers"
-                                             , "Out of Bounds"
-                                             , "Memory"
-                                             , "Embedded - CPLDs (Complex Programmable Logic Devices)"
-                                             , "Interface - Drivers, Receivers, Transceivers"
-                                             , "Interface - Drivers, Receivers, Transceivers"
-                                             , "Interface - Drivers, Receivers, Transceivers"
-                                             , "Interface - Drivers, Receivers, Transceivers"
-                                             , "Memory"
-                                             , "Memory" };
-            string[] MassPartNumbers = new string[] { "ADT7411ARQZ"
-                                                    , "S29AL032D70TFI000"
-                                                    , "AT49BV162A-70TI"
-                                                    , "NAND512W3A2BN6E"
-                                                    , "AT91R40008-66AU"
-                                                    , "CY23EP09ZXI-1H"
-                                                    , "CY62157EV30LL-45ZSXI"
-                                                    , "DCP021212DU"
-                                                    , "FM28V020-SG"
-                                                    , "GDPXA255A0E400"
-                                                    , "MGA-72543"
-                                                    , "MT48LC16M16A2P-6A IT:G"
-                                                    , "TE28F256P30B95"
-                                                    , "XC9572XL-10VQG64I"
-                                                    , "ADM208ARZ"
-                                                    , "ADM3075EARZ "
-                                                    , "ADM3202ARNZ"
-                                                    , "ADM489ARZ"
-                                                    , "AT25M02-SSHM-T"
-                                                    , "AT29LV256-20JI" };
-            string[] MassHead = new string[] { "PartNumber"
-                                             , "Description"
-                                             , "Package"
-                                             , "Engineer"
-                                             , "Difficulty"
-                                             , "Adapters"
-                                             , "MotherBoard"};
-            //if (toolStripTextBox1.TextLength > 1)
-            //{
-                Excel.Application excelApp = new Excel.Application();
-                // Создаём экземпляр рабочий книги Excel
-                Excel.Workbook workBook;
-                // Создаём экземпляр листа Excel
-                Excel.Worksheet workSheet;
+            //MassDescription;  - Массив описания семейства микросхемы
+            //MassPackage;  - Массив описания корпуса микросхемы
+            //InputDesc; - Список партномеров искомых микросхем
+
+            string[] MassHead = new string[] { "PartNumber", "Description", "Package", "Adapters", "MotherBoard", "Engineer", "Difficulty"};
+
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workBook;                // Создаём экземпляр рабочий книги Excel
+            Excel.Worksheet workSheet;              // Создаём экземпляр листа Excel
+
+            workBook = excelApp.Workbooks.Add();
+            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
 
 
-                workBook = excelApp.Workbooks.Add();
-                workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
+            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)               //Заполняем шапку таблицы
+            {
+                workSheet.Cells[1, j] = MassHead[i];
+            }
+            for (int i = 0, j = 2; i < InputDesc.Count; i++, j++)               // Заполняем наименование микросхем (1-й столбец)
+            {
+                workSheet.Cells[j, 1] = InputDesc[i];
+            }
+            for (int i = 0, j = 2; i < MassDescription.Length; i++, j++)        // Заполняем описание микросхем (2-ой столбец)
+            {
+                workSheet.Cells[j, 2] = MassDescription[i];
+            }
+            for (int i = 0, j = 2; i < MassPackage.Length; i++, j++)            // Заполняем описание корпуса миросхем (3-ой столбец)
+            {
+                workSheet.Cells[j, 3] = MassPackage[i];
+            }
 
-                // Заполняем шапку таблицы
-                for (int i = 0, j = 1; i < MassHead.Length; i++, j++)
-                {
-                    workSheet.Cells[1, j] = MassHead[i];
-                }
-                // Заполняем наименование микросхем (1-й столбец)
-                for (int i = 0, j = 2; i < MassPartNumbers.Length; i++, j++)
-                {
-                    workSheet.Cells[j, 1] = MassPartNumbers[i];
-                }
-                // Заполняем описание микросхем (2-ой столбец)
-                for (int i = 0, j = 2; i < MassDesc.Length; i++, j++)
-                {
-                    workSheet.Cells[j, 2] = MassDesc[i];
-                }
-
-                workSheet.Columns.EntireColumn.AutoFit();
-                // Открываем созданный excel-файл
-                excelApp.Visible = true;
-                excelApp.UserControl = true;
-            //}
-            //else
-            //{
-            //    DialogResult result;
-            //    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            //}
+            workSheet.Columns.EntireColumn.AutoFit();
+            excelApp.Visible = true;                    // Открываем созданный excel-файл
+            excelApp.UserControl = true;
         }
         private void pathToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -362,7 +308,7 @@ namespace API_Digi_Key_Parser_new
                 if (MassTmp[i].IndexOf('#') > 0)
                 {
                     MassDescription[i] = MassTmp[i].Substring(0, MassTmp[i].IndexOf('#'));
-                    MassPackage[i] = MassTmp[i].Substring(MassTmp[i].IndexOf('#'));
+                    MassPackage[i] = MassTmp[i].Substring(MassTmp[i].IndexOf('#') + 1);
                     textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
                 }
                 else

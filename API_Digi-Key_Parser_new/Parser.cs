@@ -103,6 +103,8 @@ namespace API_Digi_Key_Parser_new
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
                 bool check = ActionWithExcel.UpdateExcelDoc(Path, 0, Family);
 
+                //Завести массив/список для хранения статуса на пассивность текущего партномера (запрашивать его при необходимости)
+
                 if (!check) //Checking for passive components
                 {
                     if (Family != "Out of Bounds")
