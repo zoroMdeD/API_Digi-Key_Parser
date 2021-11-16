@@ -68,5 +68,14 @@ namespace API_Digi_Key_Parser_new
             outFlagPass = ListOfPartNumbers.GetListInfoExcelDoc(ConnectToExcel, Family);
             return outFlagPass;
         }
+        public string UpdateExcelDocForReadUniversalEquipmentFile(string Path, int NumSheet, string Family)
+        {
+            string outString = string.Empty;
+            ConnectToExcel = new ConnectToExcel(@Path);
+            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+            outString = ListOfPartNumbers.GetListInfoExcelDocUniversalEquipment(ConnectToExcel, Family);
+            return outString;
+        }
     }
 }

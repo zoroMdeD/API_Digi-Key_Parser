@@ -276,7 +276,7 @@ namespace API_Digi_Key_Parser_new
         {
             try
             {
-                Parser = new Parser(FindPathToFile(@"\InfoPartNumberPass.xlsx"));     //Путь для файла должен быть динамическим!!!
+                Parser = new Parser(FindPathToFile(@"\InfoPartNumberPass.xlsx"), FindPathToFile(@"\Universal.xlsx"), FindPathToFile(@"\InfoEngineers.xlsx"));     //Путь для файла должен быть динамическим!!!
                 Task task = Parser.ParserInit();
                 await task;
 

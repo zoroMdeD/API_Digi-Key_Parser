@@ -17,8 +17,9 @@ namespace API_Digi_Key_Parser_new
     public class Parser
     {
         private List<string> partNumber = new List<string>();
-        private string path = string.Empty;
-        private Dictionary<string, string> getPassiveComponents = new Dictionary<string, string>();
+        private List<string> path = new List<string>();
+        private List<string> getPassiveComponents = new List<string>();
+        private List<string> getUniversalEquipment = new List<string>();
 
         private ApiClientSettings settings;
         private ApiClientService client;
@@ -34,7 +35,7 @@ namespace API_Digi_Key_Parser_new
                 partNumber = value;
             }
         }
-        public string Path
+        public List<string> Path
         {
             get
             {
@@ -45,7 +46,7 @@ namespace API_Digi_Key_Parser_new
                 path = value;
             }
         }
-        public Dictionary<string, string> GetPassiveComponents
+        public List<string> GetPassiveComponents
         {
             get
             {
@@ -56,10 +57,23 @@ namespace API_Digi_Key_Parser_new
                 getPassiveComponents = value;
             }
         }
-
-        public Parser(string path)
+        public List<string> GetUniversalEquipment
         {
-            this.path = path;
+            get
+            {
+                return getUniversalEquipment;
+            }
+            private set
+            {
+                getUniversalEquipment = value;
+            }
+        }
+
+        public Parser(string pathInfoPartNumberPass, string pathInfoUniversalEquip, string pathInfoEngineers)
+        {
+            this.path.Add(pathInfoPartNumberPass);
+            this.path.Add(pathInfoUniversalEquip);
+            this.path.Add(pathInfoEngineers);
         }
         public Parser()
         {
@@ -114,11 +128,18 @@ namespace API_Digi_Key_Parser_new
 
                 //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
-                bool check = ActionWithExcel.UpdateExcelDoc(Path, 0, Family);
+                bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
+                if(checkPassiveComponent)
+                    getPassiveComponents.Add("Passive");
+                else
+                    getPassiveComponents.Add("null");
 
-                if (!check) //Checking for passive components
+                string checkUniversalEquipment = ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family);    //Checking for universal equipment
+                getUniversalEquipment.Add(checkUniversalEquipment);
+
+
+                if (!checkPassiveComponent) //Checking for passive components
                 {
-                    getPassiveComponents.Add(partNumber, "Not passive");
                     if (Family != "Out of Bounds")
                     {
                         //Find Package/Case
@@ -145,8 +166,6 @@ namespace API_Digi_Key_Parser_new
                 }
                 else 
                 {
-                    //Завести массив/список для хранения статуса на пассивность текущего партномера (запрашивать его при необходимости)
-                    getPassiveComponents.Add(partNumber, "Passive");
                     return Family;
                 }
             }

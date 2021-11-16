@@ -46,22 +46,10 @@ namespace API_Digi_Key_Parser_new
             }
         }
 
-        public string PartNumber    //Исходники
-        {
-            get;
-            set;
-        }
-        public string PartNumberPass    //Проверка на пассивку
-        {
-            get;
-            set;
-        }
-        //Для поиска адаптеров
-        //public string BuildNumber    
-        //{
-        //    get;
-        //    set;
-        //}
+        public string PartNumber { get; set; }          //Input file PartNumbers
+        public string PartNumberPass { get; set; }      //File passive components
+        public string Description { get; set; }         //EUniversal equipment
+        public string BuildNumber { get; set; }         //EUniversal equipment
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
         {
@@ -101,6 +89,22 @@ namespace API_Digi_Key_Parser_new
                 }
             }
             return match;
+        }
+        public string GetListInfoExcelDocUniversalEquipment(ConnectToExcel ConnectToExcel, string Family)
+        {
+            string BuildNumber = string.Empty;
+            //Query a worksheet with a header row (sintax SQL-Like LINQ)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                           select a;
+            foreach (var result in GetSheet)
+            {
+                if (Family == result.Description)
+                {
+                    BuildNumber = result.BuildNumber;
+                    return BuildNumber;
+                }
+            }
+            return "null";
         }
     }
 }
