@@ -319,13 +319,13 @@ namespace API_Digi_Key_Parser_new
                 {
                     MassDescription[i] = MassTmp[i].Substring(0, MassTmp[i].IndexOf('#'));
                     MassPackage[i] = MassTmp[i].Substring(MassTmp[i].IndexOf('#') + 1);
-                    textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
+                    //textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
                 }
                 else
                 {
                     MassDescription[i] = MassTmp[i];
                     MassPackage[i] = "null";
-                    textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
+                    //textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
                 }
                 p.Report(i);
             }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
+using System.Linq;
 
 namespace API_Digi_Key_Parser_new
 {
@@ -20,6 +21,7 @@ namespace API_Digi_Key_Parser_new
         private List<string> path = new List<string>();
         private List<string> getPassiveComponents = new List<string>();
         private List<string> getUniversalEquipment = new List<string>();
+        Dictionary<string, string> charReplace  = new Dictionary<string, string>();
 
         private ApiClientSettings settings;
         private ApiClientService client;
@@ -71,6 +73,24 @@ namespace API_Digi_Key_Parser_new
 
         public Parser(string pathInfoPartNumberPass, string pathInfoUniversalEquip, string pathInfoEngineers)
         {
+            charReplace.Add("А", "A");
+            charReplace.Add("В", "B");
+            charReplace.Add("С", "C");
+            charReplace.Add("Е", "E");
+            charReplace.Add("Н", "H");
+            charReplace.Add("К", "K");
+            charReplace.Add("М", "M");
+            charReplace.Add("О", "O");
+            charReplace.Add("Р", "P");
+            charReplace.Add("Т", "T");
+            charReplace.Add("Х", "X");
+            charReplace.Add("а", "a");
+            charReplace.Add("с", "c");
+            charReplace.Add("е", "e");
+            charReplace.Add("о", "o");
+            charReplace.Add("р", "p");
+            charReplace.Add("х", "x");
+
             this.path.Add(pathInfoPartNumberPass);
             this.path.Add(pathInfoUniversalEquip);
             this.path.Add(pathInfoEngineers);
@@ -105,10 +125,26 @@ namespace API_Digi_Key_Parser_new
                 throw;
             }
         }
+        private bool FindCyrillicSymbol (string keyword)
+        {
+            var cyrillic = Enumerable.Range(1024, 256).Select(ch => (char)ch);
+            bool result = keyword.Any(cyrillic.Contains);
+
+            return result;
+        }
         public async Task<string> FindDescriprions(string partNumber)
         {
             try
             {
+                //Написать замену кириллицы на латиницу
+                if (FindCyrillicSymbol(partNumber))
+                {
+                    foreach (KeyValuePair<string, string> pair in charReplace)
+                    {
+                        partNumber = partNumber.Replace(pair.Key, pair.Value);
+                    }
+                }
+
                 this.partNumber.Add(partNumber);
                 string Family;
                 string Package;
@@ -135,6 +171,7 @@ namespace API_Digi_Key_Parser_new
                     getPassiveComponents.Add("null");
   
                 getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
+
 
                 if (!checkPassiveComponent) //Checking for passive components
                 {

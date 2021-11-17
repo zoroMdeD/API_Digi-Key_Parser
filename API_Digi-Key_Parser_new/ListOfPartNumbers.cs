@@ -48,8 +48,10 @@ namespace API_Digi_Key_Parser_new
 
         public string PartNumber { get; set; }          //Input file PartNumbers
         public string PartNumberPass { get; set; }      //File passive components
-        public string Description { get; set; }         //EUniversal equipment
-        public string BuildNumber { get; set; }         //EUniversal equipment
+        public string Description { get; set; }         //Universal equipment
+        public string BuildNumber { get; set; }         //Universal equipment
+        public string Engineer { get; set; }            //Input file Engineers
+        public string Difficulty { get; set; }          //Input file Engineers
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
         {
