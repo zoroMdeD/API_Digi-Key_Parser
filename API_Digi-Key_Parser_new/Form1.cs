@@ -95,9 +95,9 @@ namespace API_Digi_Key_Parser_new
             {
                 workSheet.Cells[1, j] = MassHead[i];
             }
-            for (int i = 0, j = 2; i < InputDesc.Count; i++, j++)               // Заполняем наименование микросхем (1-й столбец)
+            for (int i = 0, j = 2; i < Parser.PartNumber.Count; i++, j++)               // Заполняем наименование микросхем (1-й столбец)
             {
-                workSheet.Cells[j, 1] = InputDesc[i];
+                workSheet.Cells[j, 1] = Parser.PartNumber[i];
             }
             for (int i = 0, j = 2; i < MassDescription.Length; i++, j++)        // Заполняем описание микросхем (2-ой столбец)
             {

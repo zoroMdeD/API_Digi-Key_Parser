@@ -12,6 +12,7 @@ using System.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
 using System.Linq;
+using System.Text;
 
 namespace API_Digi_Key_Parser_new
 {
@@ -22,6 +23,9 @@ namespace API_Digi_Key_Parser_new
         private List<string> getPassiveComponents = new List<string>();
         private List<string> getUniversalEquipment = new List<string>();
         Dictionary<string, string> charReplace  = new Dictionary<string, string>();
+        
+        private byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
+        private string tempSpace;
 
         private ApiClientSettings settings;
         private ApiClientService client;
@@ -91,6 +95,8 @@ namespace API_Digi_Key_Parser_new
             charReplace.Add("р", "p");
             charReplace.Add("х", "x");
 
+            tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
+
             this.path.Add(pathInfoPartNumberPass);
             this.path.Add(pathInfoUniversalEquip);
             this.path.Add(pathInfoEngineers);
@@ -132,11 +138,18 @@ namespace API_Digi_Key_Parser_new
 
             return result;
         }
+        private string FindSpecialSymbol(string keyword)
+        {
+            keyword = (keyword.Replace(" ", "")).Replace(tempSpace, "");
+            //keyword = keyword.Replace(tempSpace, "");
+
+            return keyword;
+        }
         public async Task<string> FindDescriprions(string partNumber)
         {
             try
             {
-                //Написать замену кириллицы на латиницу
+                partNumber = FindSpecialSymbol(partNumber);
                 if (FindCyrillicSymbol(partNumber))
                 {
                     foreach (KeyValuePair<string, string> pair in charReplace)
