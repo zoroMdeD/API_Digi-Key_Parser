@@ -91,32 +91,39 @@ namespace API_Digi_Key_Parser_new
             workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
 
 
-            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)               //Заполняем шапку таблицы
+            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)   //Заполняем шапку таблицы
             {
                 workSheet.Cells[1, j] = MassHead[i];
             }
-            for (int i = 0, j = 2; i < Parser.PartNumber.Count; i++, j++)               // Заполняем наименование микросхем (1-й столбец)
+            for (int i = 0, j = 2; i < Parser.PartNumber.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
             {
                 workSheet.Cells[j, 1] = Parser.PartNumber[i];
             }
-            for (int i = 0, j = 2; i < MassDescription.Length; i++, j++)        // Заполняем описание микросхем (2-ой столбец)
+            for (int i = 0, j = 2; i < MassDescription.Length; i++, j++)    //Заполняем описание микросхем (2-ой столбец)
             {
                 workSheet.Cells[j, 2] = MassDescription[i];
             }
-            for (int i = 0, j = 2; i < MassPackage.Length; i++, j++)            // Заполняем описание корпуса миросхем (3-ой столбец)
+            for (int i = 0, j = 2; i < MassPackage.Length; i++, j++)    //Заполняем описание корпуса миросхем (3-ой столбец)
             {
                 workSheet.Cells[j, 3] = MassPackage[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetPassiveComponents.Count; i++, j++)               // Заполняем наименование микросхем (4-й,5-й столбцы), частично
+            for (int i = 0, j = 2; i < Parser.GetPassiveComponents.Count; i++, j++) //Заполняем наименование микросхем (4-й,5-й столбцы), частично
             {
                 workSheet.Cells[j, 4] = Parser.GetPassiveComponents[i];
                 workSheet.Cells[j, 5] = Parser.GetPassiveComponents[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetUniversalEquipment.Count; i++, j++)               // Заполняем наименование микросхем (4-й столбец), частично
+            for (int i = 0, j = 2; i < Parser.GetUniversalEquipment.Count; i++, j++)    //Заполняем наименование микросхем (4-й столбец), частично
             {
                 workSheet.Cells[j, 4] = Parser.GetUniversalEquipment[i];
             }
-
+            for (int i = 0, j = 2; i < Parser.GetEnginner.Count; i++, j++)  //Заполняем исполнителей
+            {
+                workSheet.Cells[j, 6] = Parser.GetEnginner[i];
+            }
+            for (int i = 0, j = 2; i < Parser.GetDifficulty.Count; i++, j++)  //Заполняем сложность
+            {
+                workSheet.Cells[j, 7] = Parser.GetDifficulty[i];
+            }
 
             workSheet.Columns.EntireColumn.AutoFit();
             excelApp.Visible = true;                    // Открываем созданный excel-файл

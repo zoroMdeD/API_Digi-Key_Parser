@@ -22,9 +22,10 @@ namespace API_Digi_Key_Parser_new
         private List<string> path = new List<string>();
         private List<string> getPassiveComponents = new List<string>();
         private List<string> getUniversalEquipment = new List<string>();
+        private List<string> getEngineer = new List<string>();
+        private List<int> getDifficulty = new List<int>();
         Dictionary<string, string> charReplace  = new Dictionary<string, string>();
         
-        private byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
         private string tempSpace;
 
         private ApiClientSettings settings;
@@ -74,7 +75,28 @@ namespace API_Digi_Key_Parser_new
                 getUniversalEquipment = value;
             }
         }
-
+        public List<string> GetEnginner
+        {
+            get
+            {
+                return getEngineer;
+            }
+            private set
+            {
+                getEngineer = value;
+            }
+        }
+        public List<int> GetDifficulty
+        {
+            get
+            {
+                return getDifficulty;
+            }
+            private set
+            {
+                getDifficulty = value;
+            }
+        }
         public Parser(string pathInfoPartNumberPass, string pathInfoUniversalEquip, string pathInfoEngineers)
         {
             charReplace.Add("А", "A");
@@ -95,6 +117,7 @@ namespace API_Digi_Key_Parser_new
             charReplace.Add("р", "p");
             charReplace.Add("х", "x");
 
+            byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
             tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
 
             this.path.Add(pathInfoPartNumberPass);
@@ -164,8 +187,11 @@ namespace API_Digi_Key_Parser_new
                 string FamilyPackage;
 
                 var response = await client.KeywordSearch(partNumber);
+                int L = response.Length;
                 // In order to pretty print the json object we need to do the following
                 var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
+
+                //------------------------------------------Оптимизировать этот участок кода------------------------------------------
 
                 //Find Family
                 string s = "\"Value\": ";
@@ -176,46 +202,52 @@ namespace API_Digi_Key_Parser_new
                 Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
 
                 //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
-                ActionWithExcel ActionWithExcel = new ActionWithExcel();
-                bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
-                if(checkPassiveComponent)
-                    getPassiveComponents.Add("Passive");
-                else
-                    getPassiveComponents.Add("null");
-  
-                getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
+                //ActionWithExcel ActionWithExcel = new ActionWithExcel();
+                //bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
+                //if(checkPassiveComponent)
+                //    getPassiveComponents.Add("Passive");
+                //else
+                //    getPassiveComponents.Add("null");
+                //
+                //getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
+                //getEngineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(Path[2], 0, Family));
+                //
+                //getDifficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(Path[2], 0, Family));
+                //
+                //
+                //if (!checkPassiveComponent) //Checking for passive components
+                //{
+                //    if (Family != "Out of Bounds")
+                //    {
+                //        //Find Package/Case
+                //        s = "\"Parameter\": \"Package / Case\",";
+                //        start = jsonFormatted.IndexOf(s);
+                //        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
+                //
+                //        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
+                //
+                //        s = "\"Value\": ";
+                //        start = Package.IndexOf(s);
+                //        end = Package.IndexOf('}');
+                //
+                //        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                //
+                //        FamilyPackage = Family + "#" + Package;
+                //
+                //        return FamilyPackage;
+                //    }
+                //    else
+                //    {
+                //        return "null";
+                //    }
+                //}
+                //else 
+                //{
+                //    return Family;
+                //}
+                return Family;
+                //--------------------------------------------------------------------------------------------------------------------
 
-
-                if (!checkPassiveComponent) //Checking for passive components
-                {
-                    if (Family != "Out of Bounds")
-                    {
-                        //Find Package/Case
-                        s = "\"Parameter\": \"Package / Case\",";
-                        start = jsonFormatted.IndexOf(s);
-                        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
-
-                        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
-
-                        s = "\"Value\": ";
-                        start = Package.IndexOf(s);
-                        end = Package.IndexOf('}');
-
-                        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
-
-                        FamilyPackage = Family + "#" + Package;
-
-                        return FamilyPackage;
-                    }
-                    else
-                    {
-                        return "null";
-                    }
-                }
-                else 
-                {
-                    return Family;
-                }
             }
             catch (Exception e)
             {
