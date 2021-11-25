@@ -187,19 +187,19 @@ namespace API_Digi_Key_Parser_new
                 string FamilyPackage;
 
                 var response = await client.KeywordSearch(partNumber);
-                int L = response.Length;
+                //int L = response.Length;
                 // In order to pretty print the json object we need to do the following
-                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
+                //var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
                 //------------------------------------------Оптимизировать этот участок кода------------------------------------------
 
                 //Find Family
                 string s = "\"Value\": ";
                 char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
-                int start = jsonFormatted.IndexOf(s);
-                int end = jsonFormatted.IndexOf('}');
+                int start = response.IndexOf(s);
+                int end = response.IndexOf('}');
 
-                Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                Family = (response.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
 
                 //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
                 //ActionWithExcel ActionWithExcel = new ActionWithExcel();
