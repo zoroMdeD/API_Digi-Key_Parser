@@ -194,7 +194,7 @@ namespace API_Digi_Key_Parser_new
                 //------------------------------------------Оптимизировать этот участок кода------------------------------------------
 
                 //Find Family
-                string s = "\"Value\": ";
+                string s = "\"Value\":";
                 char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
                 int start = response.IndexOf(s);
                 int end = response.IndexOf('}');
