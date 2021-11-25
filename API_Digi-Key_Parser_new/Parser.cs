@@ -189,63 +189,63 @@ namespace API_Digi_Key_Parser_new
                 var response = await client.KeywordSearch(partNumber);
                 //int L = response.Length;
                 // In order to pretty print the json object we need to do the following
-                //var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
+                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
                 //------------------------------------------Оптимизировать этот участок кода------------------------------------------
 
                 //Find Family
-                string s = "\"Value\":";
+                string s = "\"Value\": ";
                 char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
-                int start = response.IndexOf(s);
-                int end = response.IndexOf('}');
+                int start = jsonFormatted.IndexOf(s);
+                int end = jsonFormatted.IndexOf('}');
 
-                Family = (response.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
 
                 //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
-                //ActionWithExcel ActionWithExcel = new ActionWithExcel();
-                //bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
-                //if(checkPassiveComponent)
-                //    getPassiveComponents.Add("Passive");
-                //else
-                //    getPassiveComponents.Add("null");
-                //
-                //getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
-                //getEngineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(Path[2], 0, Family));
-                //
-                //getDifficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(Path[2], 0, Family));
-                //
-                //
-                //if (!checkPassiveComponent) //Checking for passive components
-                //{
-                //    if (Family != "Out of Bounds")
-                //    {
-                //        //Find Package/Case
-                //        s = "\"Parameter\": \"Package / Case\",";
-                //        start = jsonFormatted.IndexOf(s);
-                //        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
-                //
-                //        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
-                //
-                //        s = "\"Value\": ";
-                //        start = Package.IndexOf(s);
-                //        end = Package.IndexOf('}');
-                //
-                //        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
-                //
-                //        FamilyPackage = Family + "#" + Package;
-                //
-                //        return FamilyPackage;
-                //    }
-                //    else
-                //    {
-                //        return "null";
-                //    }
-                //}
-                //else 
-                //{
-                //    return Family;
-                //}
-                return Family;
+                ActionWithExcel ActionWithExcel = new ActionWithExcel();
+                bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
+                if(checkPassiveComponent)
+                    getPassiveComponents.Add("Passive");
+                else
+                    getPassiveComponents.Add("null");
+                
+                getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
+                getEngineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(Path[2], 0, Family));
+                
+                getDifficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(Path[2], 0, Family));
+                
+                
+                if (!checkPassiveComponent) //Checking for passive components
+                {
+                    if (Family != "Out of Bounds")
+                    {
+                        //Find Package/Case
+                        s = "\"Parameter\": \"Package / Case\",";
+                        start = jsonFormatted.IndexOf(s);
+                        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
+                
+                        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
+                
+                        s = "\"Value\": ";
+                        start = Package.IndexOf(s);
+                        end = Package.IndexOf('}');
+                
+                        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
+                
+                        FamilyPackage = Family + "#" + Package;
+                
+                        return FamilyPackage;
+                    }
+                    else
+                    {
+                        return "null";
+                    }
+                }
+                else 
+                {
+                    return Family;
+                }
+                //return Family;
                 //--------------------------------------------------------------------------------------------------------------------
 
             }
