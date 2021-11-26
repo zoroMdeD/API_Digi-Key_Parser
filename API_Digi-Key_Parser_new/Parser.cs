@@ -19,17 +19,25 @@ namespace API_Digi_Key_Parser_new
     public class Parser
     {
         private List<string> partNumber = new List<string>();
-        private List<string> path = new List<string>();
-        private List<string> getPassiveComponents = new List<string>();
-        private List<string> getUniversalEquipment = new List<string>();
-        private List<string> getEngineer = new List<string>();
-        private List<int> getDifficulty = new List<int>();
+        private List<string> family = new List<string>();
+        private List<string> package = new List<string>();
+        private List<string> passiveComponents = new List<string>();
+        private List<string> universalEquipment = new List<string>();
+        private List<string> engineer = new List<string>();
+        private List<int> difficulty = new List<int>();
+        
         Dictionary<string, string> charReplace  = new Dictionary<string, string>();
+
+        private string subStr = string.Empty;
+        private int startIndex = 0;
+        private int endIndex = 0;
+        private char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
         
         private string tempSpace;
 
         private ApiClientSettings settings;
         private ApiClientService client;
+        private ActionWithExcel ActionWithExcel;
 
         public List<string> PartNumber
         {
@@ -42,63 +50,78 @@ namespace API_Digi_Key_Parser_new
                 partNumber = value;
             }
         }
-        public List<string> Path
+        public List<string> Family
         {
             get
             {
-                return path;
+                return family;
             }
             private set
             {
-                path = value;
+                family = value;
             }
         }
-        public List<string> GetPassiveComponents
+        public List<string> Package
         {
             get
             {
-                return getPassiveComponents;
+                return package;
             }
             private set
             {
-                getPassiveComponents = value;
+                package = value;
             }
         }
-        public List<string> GetUniversalEquipment
+        public List<string> PassiveComponents
         {
             get
             {
-                return getUniversalEquipment;
+                return passiveComponents;
             }
             private set
             {
-                getUniversalEquipment = value;
+                passiveComponents = value;
             }
         }
-        public List<string> GetEnginner
+        public List<string> UniversalEquipment
         {
             get
             {
-                return getEngineer;
+                return universalEquipment;
             }
             private set
             {
-                getEngineer = value;
+                universalEquipment = value;
             }
         }
-        public List<int> GetDifficulty
+        public List<string> Enginner
         {
             get
             {
-                return getDifficulty;
+                return engineer;
             }
             private set
             {
-                getDifficulty = value;
+                engineer = value;
             }
         }
-        public Parser(string pathInfoPartNumberPass, string pathInfoUniversalEquip, string pathInfoEngineers)
+        public List<int> Difficulty
         {
+            get
+            {
+                return difficulty;
+            }
+            private set
+            {
+                difficulty = value;
+            }
+        }
+        public Parser()
+        {
+            ActionWithExcel = new ActionWithExcel();
+            byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
+            tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
+
             charReplace.Add("А", "A");
             charReplace.Add("В", "B");
             charReplace.Add("С", "C");
@@ -116,19 +139,7 @@ namespace API_Digi_Key_Parser_new
             charReplace.Add("о", "o");
             charReplace.Add("р", "p");
             charReplace.Add("х", "x");
-
-            byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
-            tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
-
-            this.path.Add(pathInfoPartNumberPass);
-            this.path.Add(pathInfoUniversalEquip);
-            this.path.Add(pathInfoEngineers);
         }
-        public Parser()
-        {
-
-        }
-
         public async Task ParserInit()
         {
             try
@@ -158,101 +169,76 @@ namespace API_Digi_Key_Parser_new
         {
             var cyrillic = Enumerable.Range(1024, 256).Select(ch => (char)ch);
             bool result = keyword.Any(cyrillic.Contains);
-
             return result;
         }
-        private string FindSpecialSymbol(string keyword)
+        public List<string> FindSpecialSymbol(List<string> listKeyword)
         {
-            keyword = (keyword.Replace(" ", "")).Replace(tempSpace, "");
-            //keyword = keyword.Replace(tempSpace, "");
-
-            return keyword;
-        }
-        public async Task<string> FindDescriprions(string partNumber)
-        {
-            try
+            for (int i = 0; i < listKeyword.Count; i++)
             {
-                partNumber = FindSpecialSymbol(partNumber);
-                if (FindCyrillicSymbol(partNumber))
+                listKeyword[i] = (listKeyword[i].Replace(" ", "")).Replace(tempSpace, "");
+                if (FindCyrillicSymbol(listKeyword[i]))
                 {
                     foreach (KeyValuePair<string, string> pair in charReplace)
                     {
-                        partNumber = partNumber.Replace(pair.Key, pair.Value);
+                        listKeyword[i] = listKeyword[i].Replace(pair.Key, pair.Value);
                     }
                 }
-
-                this.partNumber.Add(partNumber);
-                string Family;
-                string Package;
-                string FamilyPackage;
-
-                var response = await client.KeywordSearch(partNumber);
-                //int L = response.Length;
-                // In order to pretty print the json object we need to do the following
-                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
-
-                //------------------------------------------Оптимизировать этот участок кода------------------------------------------
-
-                //Find Family
-                string s = "\"Value\": ";
-                char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
-                int start = jsonFormatted.IndexOf(s);
-                int end = jsonFormatted.IndexOf('}');
-
-                Family = (jsonFormatted.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
-
-                //Здесь проверить на пассивку, если да то остальное не парсить, вывести Family, и прописать в столбцы Engineers, Difficult, (MotherBoard, Adapters => "PASS")
-                ActionWithExcel ActionWithExcel = new ActionWithExcel();
-                bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(Path[0], 0, Family);    //Checking for passive components                                                                                    
-                if(checkPassiveComponent)
-                    getPassiveComponents.Add("Passive");
-                else
-                    getPassiveComponents.Add("null");
-                
-                getUniversalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(Path[1], 0, Family));    //Checking for universal equipment
-                getEngineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(Path[2], 0, Family));
-                
-                getDifficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(Path[2], 0, Family));
-                
-                
-                if (!checkPassiveComponent) //Checking for passive components
-                {
-                    if (Family != "Out of Bounds")
-                    {
-                        //Find Package/Case
-                        s = "\"Parameter\": \"Package / Case\",";
-                        start = jsonFormatted.IndexOf(s);
-                        end = jsonFormatted.IndexOf("\"Parameter\": \"Supplier Device Package\",");
-                
-                        Package = jsonFormatted.Substring(start + s.Length, end - (start + s.Length));
-                
-                        s = "\"Value\": ";
-                        start = Package.IndexOf(s);
-                        end = Package.IndexOf('}');
-                
-                        Package = (Package.Substring(start + s.Length, end - (start + s.Length))).Trim(charToTrim);
-                
-                        FamilyPackage = Family + "#" + Package;
-                
-                        return FamilyPackage;
-                    }
-                    else
-                    {
-                        return "null";
-                    }
-                }
-                else 
-                {
-                    return Family;
-                }
-                //return Family;
-                //--------------------------------------------------------------------------------------------------------------------
-
             }
-            catch (Exception e)
+            return listKeyword;
+        }
+        public async Task FindDescPack(string partNumber)
+        {
+            try
             {
-                return e.Message;
+                var response = await client.KeywordSearch(partNumber);
+
+                subStr = "\"Value\":";
+                startIndex = response.IndexOf(subStr);
+                endIndex = response.IndexOf('}');
+
+                Family.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+                FindPackage(response);
             }
+            catch (Exception)
+            {;}
+        }
+        public void FindPassiveComponents(string pathToDoc, int numSheet, string family)
+        {
+            bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(pathToDoc, numSheet, family);    //Checking for passive components                                                                                    
+            if(checkPassiveComponent)
+                passiveComponents.Add("Passive");
+            else
+                passiveComponents.Add("null");
+        }
+        private void FindPackage(string response)
+        {
+            subStr = "\"Parameter\":\"Package / Case\",";
+            if (response.IndexOf(subStr) != -1)
+            {
+                startIndex = response.IndexOf(subStr);
+                endIndex = response.IndexOf("\"Parameter\":\"Supplier Device Package\",");
+                string tmp = response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length));
+                subStr = "\"Value\":";
+                startIndex = tmp.IndexOf(subStr);
+                endIndex = tmp.IndexOf('}');
+                Package.Add((tmp.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+            }
+            else
+            {
+                Package.Add("null");
+            }
+        }
+        public void FindUniversalEquipment(string pathToDoc, int numSheet, string family)
+        {
+            universalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(pathToDoc, numSheet, family));
+        }
+        public void FindEngineer(string pathToDoc, int numSheet, string family)
+        {
+            engineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(pathToDoc, numSheet, family));
+        }
+        public void FindDifficulty(string pathToDoc, int numSheet, string family)
+        {
+            difficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(pathToDoc, numSheet, family));
         }
     }
 }

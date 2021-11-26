@@ -26,10 +26,7 @@ namespace API_Digi_Key_Parser_new
         bool CheckBtnParsing = false;
         AboutBox1 about_program = new AboutBox1();
         List<string> InputNameSheets = new List<string>();
-        List<string> InputDesc = new List<string>();
-        string[] MassDescription;
-        string[] MassPackage;
-        string[] MassTmp;
+        List<string> ProcessedPartNumbers = new List<string>();
         string[] allFoundFiles = new string[1];
         Parser Parser;
 
@@ -95,34 +92,34 @@ namespace API_Digi_Key_Parser_new
             {
                 workSheet.Cells[1, j] = MassHead[i];
             }
-            for (int i = 0, j = 2; i < Parser.PartNumber.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
+            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
             {
-                workSheet.Cells[j, 1] = Parser.PartNumber[i];
+                workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
             }
-            for (int i = 0, j = 2; i < MassDescription.Length; i++, j++)    //Заполняем описание микросхем (2-ой столбец)
+            for (int i = 0, j = 2; i < Parser.Family.Count; i++, j++)    //Заполняем описание микросхем (2-ой столбец)
             {
-                workSheet.Cells[j, 2] = MassDescription[i];
+                workSheet.Cells[j, 2] = Parser.Family[i];
             }
-            for (int i = 0, j = 2; i < MassPackage.Length; i++, j++)    //Заполняем описание корпуса миросхем (3-ой столбец)
+            for (int i = 0, j = 2; i < Parser.Package.Count; i++, j++)    //Заполняем описание корпуса миросхем (3-ой столбец)
             {
-                workSheet.Cells[j, 3] = MassPackage[i];
+                workSheet.Cells[j, 3] = Parser.Package[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetPassiveComponents.Count; i++, j++) //Заполняем наименование микросхем (4-й,5-й столбцы), частично
+            for (int i = 0, j = 2; i < Parser.PassiveComponents.Count; i++, j++) //Заполняем наименование микросхем (4-й,5-й столбцы), частично
             {
-                workSheet.Cells[j, 4] = Parser.GetPassiveComponents[i];
-                workSheet.Cells[j, 5] = Parser.GetPassiveComponents[i];
+                workSheet.Cells[j, 4] = Parser.PassiveComponents[i];
+                workSheet.Cells[j, 5] = Parser.PassiveComponents[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetUniversalEquipment.Count; i++, j++)    //Заполняем наименование микросхем (4-й столбец), частично
+            for (int i = 0, j = 2; i < Parser.UniversalEquipment.Count; i++, j++)    //Заполняем наименование микросхем (4-й столбец), частично
             {
-                workSheet.Cells[j, 4] = Parser.GetUniversalEquipment[i];
+                workSheet.Cells[j, 4] = Parser.UniversalEquipment[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetEnginner.Count; i++, j++)  //Заполняем исполнителей
+            for (int i = 0, j = 2; i < Parser.Enginner.Count; i++, j++)  //Заполняем исполнителей
             {
-                workSheet.Cells[j, 6] = Parser.GetEnginner[i];
+                workSheet.Cells[j, 6] = Parser.Enginner[i];
             }
-            for (int i = 0, j = 2; i < Parser.GetDifficulty.Count; i++, j++)  //Заполняем сложность
+            for (int i = 0, j = 2; i < Parser.Difficulty.Count; i++, j++)  //Заполняем сложность
             {
-                workSheet.Cells[j, 7] = Parser.GetDifficulty[i];
+                workSheet.Cells[j, 7] = Parser.Difficulty[i];
             }
 
             workSheet.Columns.EntireColumn.AutoFit();
@@ -293,22 +290,18 @@ namespace API_Digi_Key_Parser_new
         {
             try
             {
-                Parser = new Parser(FindPathToFile(@"\InfoPartNumberPass.xlsx"), FindPathToFile(@"\Universal.xlsx"), FindPathToFile(@"\InfoEngineers.xlsx"));     //Путь для файла должен быть динамическим!!!
+                Parser = new Parser();      /*FindPathToFile(@"\InfoPartNumberPass.xlsx"), FindPathToFile(@"\Universal.xlsx"), FindPathToFile(@"\InfoEngineers.xlsx")*/
                 Task task = Parser.ParserInit();
                 await task;
 
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
-                InputDesc = ActionWithExcel.UpdateExcelDoc(Path, 0);
-
-                MassTmp = new string[InputDesc.Count];
-                MassDescription = new string[InputDesc.Count];
-                MassPackage = new string[InputDesc.Count];
+                ProcessedPartNumbers = Parser.FindSpecialSymbol(ActionWithExcel.UpdateExcelDoc(Path, 0));
 
                 // since this is a UI event, instantiating the Progress class
                 // here will capture the UI thread context
                 var progress = new Progress<int>(i => progressBar1.Value = i);
                 progressBar1.Minimum = 0;
-                progressBar1.Maximum = InputDesc.Count - 1;
+                progressBar1.Maximum = ProcessedPartNumbers.Count - 1;
                 // pass this instance to the background task
                 _ = OutData(progress);
             }
@@ -319,21 +312,10 @@ namespace API_Digi_Key_Parser_new
         }
         async Task OutData(IProgress<int> p)
         {
-            for (int i = 0; i < InputDesc.Count; i++)
+            for (int i = 0; i < ProcessedPartNumbers.Count; i++)
             {
-                MassTmp[i] = await Parser.FindDescriprions(InputDesc[i]);
-                if (MassTmp[i].IndexOf('#') > 0)
-                {
-                    MassDescription[i] = MassTmp[i].Substring(0, MassTmp[i].IndexOf('#'));
-                    MassPackage[i] = MassTmp[i].Substring(MassTmp[i].IndexOf('#') + 1);
-                    //textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
-                }
-                else
-                {
-                    MassDescription[i] = MassTmp[i];
-                    MassPackage[i] = "null";
-                    //textBox1.AppendText(MassDescription[i] + Environment.NewLine);  //for debug
-                }
+                await Parser.FindDescPack(ProcessedPartNumbers[i]);
+
                 p.Report(i);
             }
             label1.Text = "Completed";

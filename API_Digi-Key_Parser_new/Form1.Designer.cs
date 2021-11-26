@@ -137,7 +137,7 @@ namespace API_Digi_Key_Parser_new
             this.parsingToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("parsingToolStripMenuItem.Image")));
             this.parsingToolStripMenuItem.Name = "parsingToolStripMenuItem";
             this.parsingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.parsingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.parsingToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.parsingToolStripMenuItem.Text = "Parsing";
             this.parsingToolStripMenuItem.Click += new System.EventHandler(this.parsingToolStripMenuItem_Click);
             // 
@@ -147,7 +147,7 @@ namespace API_Digi_Key_Parser_new
             this.oAuthToolStripMenuItem.Name = "oAuthToolStripMenuItem";
             this.oAuthToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.O)));
-            this.oAuthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.oAuthToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.oAuthToolStripMenuItem.Text = "OAuth";
             this.oAuthToolStripMenuItem.Click += new System.EventHandler(this.oAuthToolStripMenuItem_Click);
             // 
@@ -156,7 +156,7 @@ namespace API_Digi_Key_Parser_new
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -164,7 +164,7 @@ namespace API_Digi_Key_Parser_new
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -190,7 +190,7 @@ namespace API_Digi_Key_Parser_new
             this.toolStripTextBox4.Name = "toolStripTextBox4";
             this.toolStripTextBox4.ReadOnly = true;
             this.toolStripTextBox4.Size = new System.Drawing.Size(200, 23);
-            this.toolStripTextBox4.Text = "X:\\DataBase\\Test\\";
+            this.toolStripTextBox4.Text = "X:\\DataBase\\Test_2\\Test_API_DigiKey\\";
             // 
             // partnumbersPathToolStripMenuItem
             // 
@@ -205,6 +205,7 @@ namespace API_Digi_Key_Parser_new
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.ReadOnly = true;
             this.toolStripTextBox1.Size = new System.Drawing.Size(200, 23);
+            this.toolStripTextBox1.Text = "D:\\TestExcel.xlsx";
             // 
             // helpToolStripMenuItem
             // 
@@ -219,7 +220,7 @@ namespace API_Digi_Key_Parser_new
             this.viewHelpToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("viewHelpToolStripMenuItem.Image")));
             this.viewHelpToolStripMenuItem.Name = "viewHelpToolStripMenuItem";
             this.viewHelpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.viewHelpToolStripMenuItem.Text = "View Help";
             this.viewHelpToolStripMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
             // 
