@@ -25,14 +25,17 @@ namespace API_Digi_Key_Parser_new
         private List<string> universalEquipment = new List<string>();
         private List<string> engineer = new List<string>();
         private List<int> difficulty = new List<int>();
-        
+        private List<string> motherBoard = new List<string>();
+        private List<string> motherBoardTrim = new List<string>();
+
         Dictionary<string, string> charReplace  = new Dictionary<string, string>();
 
         private string subStr = string.Empty;
         private int startIndex = 0;
         private int endIndex = 0;
         private char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
-        
+        private char[] PartNumberTrim = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+
         private string tempSpace;
 
         private ApiClientSettings settings;
@@ -116,9 +119,30 @@ namespace API_Digi_Key_Parser_new
                 difficulty = value;
             }
         }
+        public List<string> MotherBoard
+        {
+            get
+            {
+                return motherBoard;
+            }
+            private set
+            {
+                motherBoard = value;
+            }
+        }
+        public List<string> MotherBoardTrim
+        {
+            get
+            {
+                return motherBoardTrim;
+            }
+            private set
+            {
+                motherBoardTrim = value;
+            }
+        }
         public Parser()
         {
-            ActionWithExcel = new ActionWithExcel();
             byte[] utf8Space = new byte[] { 0xC2, 0xA0 };
             tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
 
@@ -200,15 +224,9 @@ namespace API_Digi_Key_Parser_new
                 FindPackage(response);
             }
             catch (Exception)
-            {;}
-        }
-        public void FindPassiveComponents(string pathToDoc, int numSheet, string family)
-        {
-            bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(pathToDoc, numSheet, family);    //Checking for passive components                                                                                    
-            if(checkPassiveComponent)
-                passiveComponents.Add("Passive");
-            else
-                passiveComponents.Add("null");
+            {
+                throw;
+            }
         }
         private void FindPackage(string response)
         {
@@ -228,17 +246,39 @@ namespace API_Digi_Key_Parser_new
                 Package.Add("null");
             }
         }
+        public void FindPassiveComponents(string pathToDoc, int numSheet, string family)
+        {
+            ActionWithExcel = new ActionWithExcel();
+            bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(pathToDoc, numSheet, family);    //Checking for passive components                                                                                    
+            if(checkPassiveComponent)
+                passiveComponents.Add("Passive");
+            else
+                passiveComponents.Add("null");
+        }
         public void FindUniversalEquipment(string pathToDoc, int numSheet, string family)
         {
+            ActionWithExcel = new ActionWithExcel();
             universalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(pathToDoc, numSheet, family));
         }
         public void FindEngineer(string pathToDoc, int numSheet, string family)
         {
+            ActionWithExcel = new ActionWithExcel();
             engineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(pathToDoc, numSheet, family));
         }
         public void FindDifficulty(string pathToDoc, int numSheet, string family)
         {
+            ActionWithExcel = new ActionWithExcel();
             difficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(pathToDoc, numSheet, family));
+        }
+        public void FindMotherBoard(string pathToDoc, int numSheet, string partNumber)
+        {
+            ActionWithExcel = new ActionWithExcel();
+            motherBoard.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber));
+        }
+        public void FindMotherBoardTrim(string pathToDoc, int numSheet, string partNumber)
+        {
+            ActionWithExcel = new ActionWithExcel();
+            motherBoardTrim.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber.TrimEnd(PartNumberTrim)));
         }
     }
 }

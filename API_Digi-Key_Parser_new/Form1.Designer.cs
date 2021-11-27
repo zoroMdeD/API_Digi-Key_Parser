@@ -190,7 +190,6 @@ namespace API_Digi_Key_Parser_new
             this.toolStripTextBox4.Name = "toolStripTextBox4";
             this.toolStripTextBox4.ReadOnly = true;
             this.toolStripTextBox4.Size = new System.Drawing.Size(200, 23);
-            this.toolStripTextBox4.Text = "X:\\DataBase\\Test_2\\Test_API_DigiKey\\";
             // 
             // partnumbersPathToolStripMenuItem
             // 
@@ -205,7 +204,6 @@ namespace API_Digi_Key_Parser_new
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.ReadOnly = true;
             this.toolStripTextBox1.Size = new System.Drawing.Size(200, 23);
-            this.toolStripTextBox1.Text = "D:\\TestExcel.xlsx";
             // 
             // helpToolStripMenuItem
             // 

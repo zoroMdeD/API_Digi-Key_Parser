@@ -95,5 +95,14 @@ namespace API_Digi_Key_Parser_new
             outValue = ListOfPartNumbers.GetListInfoExcelDocDifficulty(ConnectToExcel, Family);
             return outValue;
         }
+        public string UpdateExcelDocForReadMotherBoard(string Path, int NumSheet, string PartNumber)
+        {
+            string outString = string.Empty;
+            ConnectToExcel = new ConnectToExcel(@Path);
+            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+            outString = ListOfPartNumbers.GetListInfoExcelDocMotherBoard(ConnectToExcel, PartNumber);
+            return outString;
+        }
     }
 }

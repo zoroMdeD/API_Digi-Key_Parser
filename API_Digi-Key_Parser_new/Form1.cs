@@ -24,6 +24,7 @@ namespace API_Digi_Key_Parser_new
 
         bool CheckBtnWrkSlt = false;
         bool CheckBtnParsing = false;
+        bool CheckBtnSave = false;
         AboutBox1 about_program = new AboutBox1();
         List<string> InputNameSheets = new List<string>();
         List<string> ProcessedPartNumbers = new List<string>();
@@ -31,10 +32,17 @@ namespace API_Digi_Key_Parser_new
         Parser Parser;
 
         public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
+        static BackgroundWorker DocBuild;
 
         public Form1()
         {
             InitializeComponent();
+
+            DocBuild = new BackgroundWorker();
+            DocBuild.WorkerReportsProgress = true;
+            DocBuild.DoWork += DocBuild_DoWork;
+            DocBuild.ProgressChanged += DocBuild_ProgressChanged;
+            DocBuild.RunWorkerCompleted += DocBuild_RunWorkerCompleted;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -55,6 +63,7 @@ namespace API_Digi_Key_Parser_new
                         saveToolStripMenuItem.Enabled = false;
                         pathToolStripMenuItem.Enabled = false;
                         CheckBtnParsing = true;
+                        CheckBtnSave = false;
                         label1.Text = "Processing...";
                         TaskRun(PathInfoPartNumbers);
                     }
@@ -74,57 +83,20 @@ namespace API_Digi_Key_Parser_new
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //MassDescription;  - Массив описания семейства микросхемы
-            //MassPackage;  - Массив описания корпуса микросхемы
-            //InputDesc; - Список партномеров искомых микросхем
-
-            string[] MassHead = new string[] { "PartNumber", "Description", "Package", "Adapters", "MotherBoard", "Engineer", "Difficulty"};
-
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook workBook;                // Создаём экземпляр рабочий книги Excel
-            Excel.Worksheet workSheet;              // Создаём экземпляр листа Excel
-
-            workBook = excelApp.Workbooks.Add();
-            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
-
-
-            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)   //Заполняем шапку таблицы
+            if (CheckBtnSave)
             {
-                workSheet.Cells[1, j] = MassHead[i];
+                SaveExcelDoc();
             }
-            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
+            else if(!CheckBtnParsing)
             {
-                workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
+                DialogResult result;
+                result = MessageBox.Show("Please run the parser!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
-            for (int i = 0, j = 2; i < Parser.Family.Count; i++, j++)    //Заполняем описание микросхем (2-ой столбец)
+            else if(CheckBtnParsing)
             {
-                workSheet.Cells[j, 2] = Parser.Family[i];
+                DialogResult result;
+                result = MessageBox.Show("Please wait for the parser to finish working!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
-            for (int i = 0, j = 2; i < Parser.Package.Count; i++, j++)    //Заполняем описание корпуса миросхем (3-ой столбец)
-            {
-                workSheet.Cells[j, 3] = Parser.Package[i];
-            }
-            for (int i = 0, j = 2; i < Parser.PassiveComponents.Count; i++, j++) //Заполняем наименование микросхем (4-й,5-й столбцы), частично
-            {
-                workSheet.Cells[j, 4] = Parser.PassiveComponents[i];
-                workSheet.Cells[j, 5] = Parser.PassiveComponents[i];
-            }
-            for (int i = 0, j = 2; i < Parser.UniversalEquipment.Count; i++, j++)    //Заполняем наименование микросхем (4-й столбец), частично
-            {
-                workSheet.Cells[j, 4] = Parser.UniversalEquipment[i];
-            }
-            for (int i = 0, j = 2; i < Parser.Enginner.Count; i++, j++)  //Заполняем исполнителей
-            {
-                workSheet.Cells[j, 6] = Parser.Enginner[i];
-            }
-            for (int i = 0, j = 2; i < Parser.Difficulty.Count; i++, j++)  //Заполняем сложность
-            {
-                workSheet.Cells[j, 7] = Parser.Difficulty[i];
-            }
-
-            workSheet.Columns.EntireColumn.AutoFit();
-            excelApp.Visible = true;                    // Открываем созданный excel-файл
-            excelApp.UserControl = true;
         }
         private void pathToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -141,6 +113,51 @@ namespace API_Digi_Key_Parser_new
                 DialogResult result;
                 result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
+        }
+        void SaveExcelDoc()
+        {
+            string[] MassHead = new string[] { "PartNumber", "Description", "Package", "Adapters", "MotherBoard", "Engineer", "Difficulty" };
+
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workBook;                // Создаём экземпляр рабочий книги Excel
+            Excel.Worksheet workSheet;              // Создаём экземпляр листа Excel
+
+            workBook = excelApp.Workbooks.Add();
+            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
+
+
+            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)   //Заполняем шапку таблицы
+            {
+                workSheet.Cells[1, j] = MassHead[i];
+            }
+            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
+            {
+                workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
+                if (Parser.Family[i] != "Out of Bounds")
+                    workSheet.Cells[j, 2] = Parser.Family[i];
+                else
+                    workSheet.Cells[j, 2] = "null";
+                workSheet.Cells[j, 3] = Parser.Package[i];
+                if (Parser.PassiveComponents[i] != "Passive")
+                    workSheet.Cells[j, 4] = Parser.UniversalEquipment[i];
+                else
+                    workSheet.Cells[j, 4] = Parser.PassiveComponents[i];
+                workSheet.Cells[j, 6] = Parser.Enginner[i];
+                if (Parser.PassiveComponents[i] != "Passive")
+                    workSheet.Cells[j, 5] = Parser.MotherBoard[i];
+                if ((Parser.Difficulty[i] == 4) && (Parser.MotherBoard[i] != "null") && (Parser.MotherBoard[i] != "Passive"))
+                    workSheet.Cells[j, 7] = Parser.Difficulty[i] - 1;
+                else
+                    workSheet.Cells[j, 7] = Parser.Difficulty[i];
+                if (Parser.MotherBoard[i] == "null")
+                    if (Parser.MotherBoardTrim[i] != "null")
+                        workSheet.Cells[j, 5] = "match";
+                    else
+                        workSheet.Cells[j, 5] = Parser.MotherBoardTrim[i];
+            }
+            workSheet.Columns.EntireColumn.AutoFit();
+            excelApp.Visible = true;                    // Открываем созданный excel-файл
+            excelApp.UserControl = true;
         }
         string Open_dialog()
         {
@@ -179,9 +196,9 @@ namespace API_Digi_Key_Parser_new
                 }
                 CheckBtnWrkSlt = false;
             }
-            catch(Exception)
+            catch(Exception ex)
             { 
-                ; 
+                textBox1.AppendText(ex.Message);
             }
             //BeginInvoke(new MyDelegate(test2));
         }
@@ -229,6 +246,7 @@ namespace API_Digi_Key_Parser_new
                         saveToolStripMenuItem.Enabled = false;
                         pathToolStripMenuItem.Enabled = false;
                         CheckBtnParsing = true;
+                        CheckBtnSave = false;
                         label1.Text = "Processing...";
                         TaskRun(PathInfoPartNumbers);
                     }
@@ -261,14 +279,19 @@ namespace API_Digi_Key_Parser_new
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (toolStripTextBox1.TextLength > 1)
+            if (CheckBtnSave)
             {
-
+                SaveExcelDoc();
             }
-            else
+            else if (!CheckBtnParsing)
             {
                 DialogResult result;
-                result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                result = MessageBox.Show("Please run the parser!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+            else if (CheckBtnParsing)
+            {
+                DialogResult result;
+                result = MessageBox.Show("Please wait for the parser to finish working!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
         }
         private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -301,28 +324,67 @@ namespace API_Digi_Key_Parser_new
                 // here will capture the UI thread context
                 var progress = new Progress<int>(i => progressBar1.Value = i);
                 progressBar1.Minimum = 0;
-                progressBar1.Maximum = ProcessedPartNumbers.Count - 1;
+                progressBar1.Maximum = (ProcessedPartNumbers.Count - 1)*2;
                 // pass this instance to the background task
                 _ = OutData(progress);
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                textBox1.AppendText(e.Message);
+                textBox1.AppendText(ex.Message);
             }
         }
         async Task OutData(IProgress<int> p)
         {
+            try
+            {
+                for (int i = 0; i < ProcessedPartNumbers.Count; i++)
+                {
+                    await Parser.FindDescPack(ProcessedPartNumbers[i]);
+
+                    p.Report(i);
+                }
+
+                DocBuild.RunWorkerAsync(null);
+            }
+            catch(Exception ex)
+            {
+                textBox1.AppendText(ex.Message);    
+            }
+        }
+        void DocBuild_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int Progress = ProcessedPartNumbers.Count - 1;
             for (int i = 0; i < ProcessedPartNumbers.Count; i++)
             {
-                await Parser.FindDescPack(ProcessedPartNumbers[i]);
-
-                p.Report(i);
+                Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
+                Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
+                Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);
+                Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);
+                Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);
+                Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);
+                DocBuild.ReportProgress(Progress++);
             }
-            label1.Text = "Completed";
-            CheckBtnParsing = false;
-            oAuthToolStripMenuItem.Enabled = true;
-            saveToolStripMenuItem.Enabled = true;
-            pathToolStripMenuItem.Enabled = true;
+            e.Result = "Completed";
+        }
+        void DocBuild_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if(e.Cancelled)
+                textBox1.Text += "Interrupted by user" + Environment.NewLine;
+            else if (e.Error != null)
+                textBox1.Text += "Interrupted" + Environment.NewLine;
+            else
+            {
+                label1.Text = e.Result + Environment.NewLine;
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
+            }
+        }
+        void DocBuild_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
         }
     }
 }

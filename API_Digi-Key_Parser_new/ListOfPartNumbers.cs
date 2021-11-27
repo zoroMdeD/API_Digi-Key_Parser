@@ -51,7 +51,8 @@ namespace API_Digi_Key_Parser_new
         public string Description { get; set; }         //Universal equipment
         public string BuildNumber { get; set; }         //Universal equipment
         public string Engineer { get; set; }            //Input file Engineers
-        public int Difficulty { get; set; }          //Input file Engineers
+        public int Difficulty { get; set; }             //Input file Engineers
+        public string MotherBoard { get; set; }         //Input file MotherBoard
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
         {
@@ -139,6 +140,22 @@ namespace API_Digi_Key_Parser_new
                 }
             }
             return -1;
+        }
+        public string GetListInfoExcelDocMotherBoard(ConnectToExcel ConnectToExcel, string PartNumber)
+        {
+            string MotherBoard = string.Empty;
+            //Query a worksheet with a header row (sintax SQL-Like LINQ)
+            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                           select a;
+            foreach (var result in GetSheet)
+            {
+                if (PartNumber == result.PartNumber)
+                {
+                    MotherBoard = result.MotherBoard;
+                    return MotherBoard;
+                }
+            }
+            return "null";
         }
     }
 }
