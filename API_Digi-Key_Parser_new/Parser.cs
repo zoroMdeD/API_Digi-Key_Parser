@@ -34,7 +34,9 @@ namespace API_Digi_Key_Parser_new
         private int startIndex = 0;
         private int endIndex = 0;
         private char[] charToTrim = { ' ', '\n', '\"', '\\', '\r' };
-        private char[] PartNumberTrim = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+        private char[] PartNumberTrim = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                                          'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
+                                          '_', '-' };
 
         private string tempSpace;
 
@@ -164,7 +166,7 @@ namespace API_Digi_Key_Parser_new
             charReplace.Add("р", "p");
             charReplace.Add("х", "x");
         }
-        public async Task ParserInit()
+        public async Task<string> ParserInit()
         {
             try
             {
@@ -178,11 +180,14 @@ namespace API_Digi_Key_Parser_new
                     if (oAuth2AccessToken.IsError)
                     {
                         // Current Refresh token is invalid or expired 
-                        return;
+                        return "Current Refresh token is invalid or expired ";
                     }
 
                     settings.UpdateAndSave(oAuth2AccessToken);
+
+                    return "After call to refresh" + Environment.NewLine + settings.ToString();
                 }
+                return Environment.NewLine + "Parsing..." + Environment.NewLine;
             }
             catch (Exception)
             {

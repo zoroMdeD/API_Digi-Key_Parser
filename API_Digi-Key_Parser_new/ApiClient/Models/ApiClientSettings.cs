@@ -63,14 +63,14 @@ namespace ApiClient.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine(@"   ------------ [ ApiClientSettings ] -------------");
-            sb.AppendLine(@"     ClientId            : " + ClientId);
-            sb.AppendLine(@"     ClientSecret        : " + ClientSecret);
-            sb.AppendLine(@"     RedirectUri         : " + RedirectUri);
-            sb.AppendLine(@"     AccessToken         : " + AccessToken);
-            sb.AppendLine(@"     RefreshToken        : " + RefreshToken);
-            sb.AppendLine(@"     ExpirationDateTime  : " + ExpirationDateTime);
-            sb.AppendLine(@"   ---------------------------------------------");
+            sb.AppendLine(@"ApiClientSettings:");
+            sb.AppendLine(@"ClientId: " + ClientId);
+            sb.AppendLine(@"ClientSecret: " + ClientSecret);
+            sb.AppendLine(@"RedirectUri: " + RedirectUri);
+            sb.AppendLine(@"AccessToken: " + AccessToken);
+            sb.AppendLine(@"RefreshToken: " + RefreshToken);
+            sb.AppendLine(@"ExpirationDateTime: " + ExpirationDateTime);
+
 
             return sb.ToString();
         }

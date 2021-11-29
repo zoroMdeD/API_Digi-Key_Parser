@@ -42,26 +42,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="API_Digi-Key_Parser_new.exe" size="129480">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="API_Digi-Key_Parser_new.exe" size="136136">
       <assemblyIdentity name="API_Digi-Key_Parser_new" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>a59yzXDMUph0A3yAZBErT3VPmoBQC1r5/t94b8ye0Gw=</dsig:DigestValue>
+        <dsig:DigestValue>WJaOzxjJTUcM0wb5PpW/gl+LQpWmUricNt0jUqjudyw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ApiClient.dll" size="32768">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ApiClient.dll" size="32256">
       <assemblyIdentity name="ApiClient" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Xjo0fqRiot+oV76OXI8xUmk/avzeOlogj8VxEl1oAwI=</dsig:DigestValue>
+        <dsig:DigestValue>cqGWz9vhyO0uciIi/rxo/T20ZLR0HdiH/f4JGRwI5eQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

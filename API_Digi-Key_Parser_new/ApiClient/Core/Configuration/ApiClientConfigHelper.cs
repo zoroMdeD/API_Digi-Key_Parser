@@ -50,14 +50,14 @@ namespace ApiClient.Core.Configuration
                     ? Directory.GetParent(baseDir).Parent.Parent   // Console Apps
                     : Directory.GetParent(baseDir);    // Asp.Net apps
 
-                if (!File.Exists(Path.Combine(solutionDir.FullName, @"D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\apiclient.config")))
+                if (!File.Exists(Path.Combine(solutionDir.FullName, "apiclient.config")))   //@"D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\apiclient.config"
                 {
                     throw new ApiException($"Unable to locate apiclient.config in solution folder {solutionDir.FullName}");
                 }
 
                 var map = new ExeConfigurationFileMap
                 {
-                    ExeConfigFilename = Path.Combine(solutionDir.FullName, @"D:\STUDIES\C#_exercise\API_Digi-Key_Parser_new\API_Digi-Key_Parser_new\apiclient.config"),
+                    ExeConfigFilename = Path.Combine(solutionDir.FullName, "apiclient.config"),
                 };
                 Console.WriteLine($"map.ExeConfigFilename {map.ExeConfigFilename}");
                 _config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);

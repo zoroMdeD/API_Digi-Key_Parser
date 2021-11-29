@@ -28,7 +28,7 @@ namespace API_Digi_Key_Parser_new
         AboutBox1 about_program = new AboutBox1();
         List<string> InputNameSheets = new List<string>();
         List<string> ProcessedPartNumbers = new List<string>();
-        string[] allFoundFiles = new string[1];
+        string[] WorkDirPath = new string[1];
         Parser Parser;
 
         public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
@@ -37,6 +37,8 @@ namespace API_Digi_Key_Parser_new
         public Form1()
         {
             InitializeComponent();
+
+            yesToolStripMenuItem.Enabled = false;
 
             DocBuild = new BackgroundWorker();
             DocBuild.WorkerReportsProgress = true;
@@ -57,7 +59,7 @@ namespace API_Digi_Key_Parser_new
                 if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
                 {
                     //if ((toolStripTextBox4.TextLength > 1) || (teststr.Contains("\\Test_API_DigiKey")))   //System.NullReferenceException
-                    if (allFoundFiles[0].Contains("\\Test_API_DigiKey"))
+                    if (WorkDirPath[0].Contains("\\Parser_API"))
                     {
                         oAuthToolStripMenuItem.Enabled = false;
                         saveToolStripMenuItem.Enabled = false;
@@ -103,8 +105,9 @@ namespace API_Digi_Key_Parser_new
             if (!CheckBtnWrkSlt)
             {
                 CheckBtnWrkSlt = true;
-                GetPathDirectory();
-                Thread.Sleep(500);
+                if (yesToolStripMenuItem.Enabled != false)
+                    GetPathDirectory();
+                Thread.Sleep(250);
                 toolStripTextBox1.Text = Open_dialog();
                 FindAllFileOnLocalServer(toolStripTextBox4.Text);
             }
@@ -130,7 +133,7 @@ namespace API_Digi_Key_Parser_new
             {
                 workSheet.Cells[1, j] = MassHead[i];
             }
-            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем наименование микросхем (1-й столбец)
+            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем таблицу
             {
                 workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
                 if (Parser.Family[i] != "Out of Bounds")
@@ -152,10 +155,18 @@ namespace API_Digi_Key_Parser_new
                 if (Parser.MotherBoard[i] == "null")
                     if (Parser.MotherBoardTrim[i] != "null")
                         workSheet.Cells[j, 5] = "match";
-                    else
+                    else if(Parser.PassiveComponents[i] != "Passive")
                         workSheet.Cells[j, 5] = Parser.MotherBoardTrim[i];
+                    else
+                        workSheet.Cells[j, 5] = Parser.PassiveComponents[i];
             }
             workSheet.Columns.EntireColumn.AutoFit();
+            
+            /* Enable filter on sheet
+             * Excel.Range target = workSheet.get_Range("A1:G1");
+             * workSheet.Cells.AutoFilter(1, target, Excel.XlAutoFilterOperator.xlAnd, true);
+             */
+
             excelApp.Visible = true;                    // Открываем созданный excel-файл
             excelApp.UserControl = true;
         }
@@ -182,10 +193,10 @@ namespace API_Digi_Key_Parser_new
             try
             {
                 int ienum = 0;
-                allFoundFiles[0] = @strPath;//Directory.GetDirectories(@strPath);//, "Test_API_DigiKey", SearchOption.AllDirectories);
-                BeginInvoke(new MyDelegate(CheckCorrectPath));
+                WorkDirPath[0] = @strPath;//Directory.GetDirectories(@strPath);//, "Test_API_DigiKey", SearchOption.AllDirectories);
+
                 //textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
-                RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(allFoundFiles);
+                RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(WorkDirPath);
                 RecursiveFileProcessor.RunProcessor(RecursiveFileProcessor.GetPath);
                 MassPathFile = new string[RecursiveFileProcessor.OutPath.Count];
                 foreach (string item in RecursiveFileProcessor.OutPath)
@@ -201,6 +212,7 @@ namespace API_Digi_Key_Parser_new
                 textBox1.AppendText(ex.Message);
             }
             //BeginInvoke(new MyDelegate(test2));
+            BeginInvoke(new MyDelegate(CheckCorrectPath));
         }
         public static string GetLnkTarget(string lnkPath)   //Method get path an link
         {
@@ -213,8 +225,11 @@ namespace API_Digi_Key_Parser_new
         }
         void CheckCorrectPath()
         {
-            if (allFoundFiles.Length > 0)
-                textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+            if (WorkDirPath.Length > 0)
+            {
+                textBox1.AppendText(Environment.NewLine + $"Working directory: {WorkDirPath[0]}" + Environment.NewLine +
+                                                          $"Source file: {PathInfoPartNumbers}" + Environment.NewLine);                         //for more info
+            }
             else
             {
                 DialogResult result;
@@ -264,17 +279,14 @@ namespace API_Digi_Key_Parser_new
             }
         }
 
-        private void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (toolStripTextBox1.TextLength > 1)
-            {
-            
-            }
-            else
-            {
-                DialogResult result;
-                result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            }
+            oAuthToolStripMenuItem.Enabled = false;
+
+            OAuth OAuth = new OAuth();
+            string StrOut = await OAuth.Authorize();
+
+            textBox1.AppendText(StrOut + Environment.NewLine);    //for info
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -314,8 +326,9 @@ namespace API_Digi_Key_Parser_new
             try
             {
                 Parser = new Parser();      /*FindPathToFile(@"\InfoPartNumberPass.xlsx"), FindPathToFile(@"\Universal.xlsx"), FindPathToFile(@"\InfoEngineers.xlsx")*/
-                Task task = Parser.ParserInit();
-                await task;
+                string StrOut = await Parser.ParserInit();
+
+                textBox1.AppendText(StrOut + Environment.NewLine);    //for info
 
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
                 ProcessedPartNumbers = Parser.FindSpecialSymbol(ActionWithExcel.UpdateExcelDoc(Path, 0));
@@ -358,10 +371,10 @@ namespace API_Digi_Key_Parser_new
             {
                 Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
                 Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
-                Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);
-                Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);
-                Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);
-                Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);
+                Parser.FindEngineer(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);
+                Parser.FindDifficulty(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);
+                Parser.FindMotherBoard(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);
+                Parser.FindMotherBoardTrim(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);
                 DocBuild.ReportProgress(Progress++);
             }
             e.Result = "Completed";
@@ -385,6 +398,16 @@ namespace API_Digi_Key_Parser_new
         void DocBuild_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
+        }
+        private void yesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            noToolStripMenuItem.Enabled = true;
+            yesToolStripMenuItem.Enabled = false;
+        }
+        private void noToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            yesToolStripMenuItem.Enabled = true;
+            noToolStripMenuItem.Enabled = false;
         }
     }
 }
