@@ -187,7 +187,7 @@ namespace API_Digi_Key_Parser_new
 
                     return "After call to refresh" + Environment.NewLine + settings.ToString();
                 }
-                return Environment.NewLine + "Parsing..." + Environment.NewLine;
+                return Environment.NewLine + "Parsing...";
             }
             catch (Exception)
             {

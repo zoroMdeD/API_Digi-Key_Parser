@@ -39,6 +39,7 @@ namespace API_Digi_Key_Parser_new
             InitializeComponent();
 
             yesToolStripMenuItem.Enabled = false;
+            toolStripTextBox4.Text = @"X:\DataBase\Test_2\Test_API_DigiKey";    //X:\DataBase\Parser\Parser_API
 
             DocBuild = new BackgroundWorker();
             DocBuild.WorkerReportsProgress = true;
@@ -59,7 +60,7 @@ namespace API_Digi_Key_Parser_new
                 if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
                 {
                     //if ((toolStripTextBox4.TextLength > 1) || (teststr.Contains("\\Test_API_DigiKey")))   //System.NullReferenceException
-                    if (WorkDirPath[0].Contains("\\Parser_API"))
+                    if (WorkDirPath[0].Contains("\\Test_API_DigiKey"))    //"\\Parser_API"
                     {
                         oAuthToolStripMenuItem.Enabled = false;
                         saveToolStripMenuItem.Enabled = false;
@@ -371,10 +372,10 @@ namespace API_Digi_Key_Parser_new
             {
                 Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
                 Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
-                Parser.FindEngineer(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);
-                Parser.FindDifficulty(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);
-                Parser.FindMotherBoard(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);
-                Parser.FindMotherBoardTrim(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);
+                Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);   //@"\engineers.xlsx"
+                Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]); //@"\engineers.xlsx"
+                Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
+                Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
                 DocBuild.ReportProgress(Progress++);
             }
             e.Result = "Completed";

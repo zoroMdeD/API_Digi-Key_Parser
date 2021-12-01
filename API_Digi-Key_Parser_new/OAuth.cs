@@ -71,7 +71,7 @@ namespace API_Digi_Key_Parser_new
                        $"Using code {code}" + Environment.NewLine + 
                        $"Access token : {result.AccessToken}" + Environment.NewLine + 
                        $"Refresh token: {result.RefreshToken}" + Environment.NewLine + 
-                       $"Expires in   : {result.ExpiresIn}" + Environment.NewLine + 
+                       $"Expires in   : {result.ExpiresIn}" + Environment.NewLine + Environment.NewLine + 
                         "After a good refresh";
             }
         }

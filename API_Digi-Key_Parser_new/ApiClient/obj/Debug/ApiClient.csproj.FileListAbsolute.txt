@@ -53,6 +53,5 @@ D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiC
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\bin\Debug\System.Web.Http.xml
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\obj\Debug\ApiClient.csproj.AssemblyReference.cache
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\obj\Debug\ApiClient.csproj.CoreCompileInputs.cache
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\obj\Debug\ApiClient.csproj.CopyComplete
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\obj\Debug\ApiClient.dll
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\ApiClient\obj\Debug\ApiClient.pdb
