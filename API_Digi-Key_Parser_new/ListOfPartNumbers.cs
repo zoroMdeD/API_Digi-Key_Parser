@@ -66,96 +66,138 @@ namespace API_Digi_Key_Parser_new
 
         public List<string> GetListInfoExcelDoc(ConnectToExcel ConnectToExcel)
         {
-            MassPartNumber = new List<string>();
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                MassPartNumber.Add(result.PartNumber);
+                MassPartNumber = new List<string>();
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
+                {
+                    MassPartNumber.Add(result.PartNumber);
+                }
+                return MassPartNumber;
             }
-            return MassPartNumber;
+            catch(Exception)
+            {
+                throw;
+            }
         }
         //Method checking for passive components
         public bool GetListInfoExcelDoc(ConnectToExcel ConnectToExcel, string Family)
         {
-            bool match = false;
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                if(Family == result.PartNumberPass)
+                bool match = false;
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
                 {
-                    match = true;
-                    break;
+                    if (Family == result.PartNumberPass)
+                    {
+                        match = true;
+                        break;
+                    }
                 }
+                return match;
             }
-            return match;
+            catch(Exception)
+            {
+                throw;
+            }
         }
         public string GetListInfoExcelDocUniversalEquipment(ConnectToExcel ConnectToExcel, string Family)
         {
-            string BuildNumber = string.Empty;
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                if (Family == result.Description)
+                string BuildNumber = string.Empty;
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
                 {
-                    BuildNumber = result.BuildNumber;
-                    return BuildNumber;
+                    if (Family == result.Description)
+                    {
+                        BuildNumber = result.BuildNumber;
+                        return BuildNumber;
+                    }
                 }
+                return "null";
             }
-            return "null";
+            catch(Exception)
+            {
+                throw;
+            }
         }
         public string GetListInfoExcelDocEngineer(ConnectToExcel ConnectToExcel, string Family)
         {
-            string Engineer = string.Empty;
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                if (Family == result.Description)
+                string Engineer = string.Empty;
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
                 {
-                    Engineer = result.Engineer;
-                    return Engineer;
+                    if (Family == result.Description)
+                    {
+                        Engineer = result.Engineer;
+                        return Engineer;
+                    }
                 }
+                return "null";
             }
-            return "null";
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public int GetListInfoExcelDocDifficulty(ConnectToExcel ConnectToExcel, string Family)
         {
-            int Difficulty = 0;
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                if (Family == result.Description)
+                int Difficulty = 0;
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
                 {
-                    Difficulty = result.Difficulty;
-                    return Difficulty;
+                    if (Family == result.Description)
+                    {
+                        Difficulty = result.Difficulty;
+                        return Difficulty;
+                    }
                 }
+                return -1;
             }
-            return -1;
+            catch(Exception)
+            {
+                throw;
+            }
         }
         public string GetListInfoExcelDocMotherBoard(ConnectToExcel ConnectToExcel, string PartNumber)
         {
-            string MotherBoard = string.Empty;
-            //Query a worksheet with a header row (sintax SQL-Like LINQ)
-            var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
-                           select a;
-            foreach (var result in GetSheet)
+            try
             {
-                if (PartNumber == result.PartNumber)
+                string MotherBoard = string.Empty;
+                //Query a worksheet with a header row (sintax SQL-Like LINQ)
+                var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
+                               select a;
+                foreach (var result in GetSheet)
                 {
-                    MotherBoard = result.MotherBoard;
-                    return MotherBoard;
+                    if (PartNumber == result.PartNumber)
+                    {
+                        MotherBoard = result.MotherBoard;
+                        return MotherBoard;
+                    }
                 }
+                return "null";
             }
-            return "null";
+            catch(Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -54,55 +54,97 @@ namespace API_Digi_Key_Parser_new
         }
         public List<string> UpdateExcelDoc(string Path, int NumSheet)
         {
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outMassInfo = ListOfPartNumbers.GetListInfoExcelDoc(ConnectToExcel);
-            return outMassInfo;
+            try
+            {
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outMassInfo = ListOfPartNumbers.GetListInfoExcelDoc(ConnectToExcel);
+                return outMassInfo;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
         public bool UpdateExcelDoc(string Path, int NumSheet, string Family)
         {
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outFlagPass = ListOfPartNumbers.GetListInfoExcelDoc(ConnectToExcel, Family);
-            return outFlagPass;
+            try
+            {
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outFlagPass = ListOfPartNumbers.GetListInfoExcelDoc(ConnectToExcel, Family);
+                return outFlagPass;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
         public string UpdateExcelDocForReadUniversalEquipmentFile(string Path, int NumSheet, string Family)
         {
-            string outString = string.Empty;
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outString = ListOfPartNumbers.GetListInfoExcelDocUniversalEquipment(ConnectToExcel, Family);
-            return outString;
+            try
+            {
+                string outString = string.Empty;
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outString = ListOfPartNumbers.GetListInfoExcelDocUniversalEquipment(ConnectToExcel, Family);
+                return outString;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
         public string UpdateExcelDocForReadEngineer(string Path, int NumSheet, string Family)
         {
-            string outString = string.Empty;
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outString = ListOfPartNumbers.GetListInfoExcelDocEngineer(ConnectToExcel, Family);
-            return outString;
+            try
+            {
+                string outString = string.Empty;
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outString = ListOfPartNumbers.GetListInfoExcelDocEngineer(ConnectToExcel, Family);
+                return outString;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
         public int UpdateExcelDocForReadDifficulty(string Path, int NumSheet, string Family)
         {
-            int outValue = 0;
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outValue = ListOfPartNumbers.GetListInfoExcelDocDifficulty(ConnectToExcel, Family);
-            return outValue;
+            try
+            {
+                int outValue = 0;
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outValue = ListOfPartNumbers.GetListInfoExcelDocDifficulty(ConnectToExcel, Family);
+                return outValue;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
         public string UpdateExcelDocForReadMotherBoard(string Path, int NumSheet, string PartNumber)
         {
-            string outString = string.Empty;
-            ConnectToExcel = new ConnectToExcel(@Path);
-            listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
-            ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-            outString = ListOfPartNumbers.GetListInfoExcelDocMotherBoard(ConnectToExcel, PartNumber);
-            return outString;
+            try
+            {
+                string outString = string.Empty;
+                ConnectToExcel = new ConnectToExcel(@Path);
+                listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
+                ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
+                outString = ListOfPartNumbers.GetListInfoExcelDocMotherBoard(ConnectToExcel, PartNumber);
+                return outString;
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
         }
     }
 }

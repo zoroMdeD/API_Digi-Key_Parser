@@ -46,14 +46,21 @@ namespace API_Digi_Key_Parser_new
 
         public static List<string> GetWorksheetNames(ConnectToExcel ConxObject)
         {
-            List<string> MassWorksheetNames = new List<string>();
-            var worksheetNames = ConxObject.UrlConnexion.GetWorksheetNames();
-            foreach(var result in worksheetNames)
+            try
             {
-                MassWorksheetNames.Add(result);
+                List<string> MassWorksheetNames = new List<string>();
+                var worksheetNames = ConxObject.UrlConnexion.GetWorksheetNames();
+                foreach (var result in worksheetNames)
+                {
+                    MassWorksheetNames.Add(result);
+                }
+
+                return MassWorksheetNames;
             }
-        
-            return MassWorksheetNames;
+            catch(Exception)
+            {
+                throw;
+            }
         }
     }
 }

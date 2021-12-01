@@ -235,55 +235,104 @@ namespace API_Digi_Key_Parser_new
         }
         private void FindPackage(string response)
         {
-            subStr = "\"Parameter\":\"Package / Case\",";
-            if (response.IndexOf(subStr) != -1)
+            try
             {
-                startIndex = response.IndexOf(subStr);
-                endIndex = response.IndexOf("\"Parameter\":\"Supplier Device Package\",");
-                string tmp = response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length));
-                subStr = "\"Value\":";
-                startIndex = tmp.IndexOf(subStr);
-                endIndex = tmp.IndexOf('}');
-                Package.Add((tmp.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+                subStr = "\"Parameter\":\"Package / Case\",";
+                if (response.IndexOf(subStr) != -1)
+                {
+                    startIndex = response.IndexOf(subStr);
+                    endIndex = response.IndexOf("\"Parameter\":\"Supplier Device Package\",");
+                    string tmp = response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length));
+                    subStr = "\"Value\":";
+                    startIndex = tmp.IndexOf(subStr);
+                    endIndex = tmp.IndexOf('}');
+                    Package.Add((tmp.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+                }
+                else
+                {
+                    Package.Add("null");
+                }
             }
-            else
+            catch(Exception)
             {
-                Package.Add("null");
+                throw;
             }
         }
         public void FindPassiveComponents(string pathToDoc, int numSheet, string family)
         {
-            ActionWithExcel = new ActionWithExcel();
-            bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(pathToDoc, numSheet, family);    //Checking for passive components                                                                                    
-            if(checkPassiveComponent)
-                passiveComponents.Add("Passive");
-            else
-                passiveComponents.Add("null");
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                bool checkPassiveComponent = ActionWithExcel.UpdateExcelDoc(pathToDoc, numSheet, family);    //Checking for passive components                                                                                    
+                if (checkPassiveComponent)
+                    passiveComponents.Add("Passive");
+                else
+                    passiveComponents.Add("null");
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
         public void FindUniversalEquipment(string pathToDoc, int numSheet, string family)
         {
-            ActionWithExcel = new ActionWithExcel();
-            universalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(pathToDoc, numSheet, family));
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                universalEquipment.Add(ActionWithExcel.UpdateExcelDocForReadUniversalEquipmentFile(pathToDoc, numSheet, family));
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
         public void FindEngineer(string pathToDoc, int numSheet, string family)
         {
-            ActionWithExcel = new ActionWithExcel();
-            engineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(pathToDoc, numSheet, family));
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                engineer.Add(ActionWithExcel.UpdateExcelDocForReadEngineer(pathToDoc, numSheet, family));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public void FindDifficulty(string pathToDoc, int numSheet, string family)
         {
-            ActionWithExcel = new ActionWithExcel();
-            difficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(pathToDoc, numSheet, family));
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                difficulty.Add(ActionWithExcel.UpdateExcelDocForReadDifficulty(pathToDoc, numSheet, family));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public void FindMotherBoard(string pathToDoc, int numSheet, string partNumber)
         {
-            ActionWithExcel = new ActionWithExcel();
-            motherBoard.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber));
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                motherBoard.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public void FindMotherBoardTrim(string pathToDoc, int numSheet, string partNumber)
         {
-            ActionWithExcel = new ActionWithExcel();
-            motherBoardTrim.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber.TrimEnd(PartNumberTrim)));
+            try
+            {
+                ActionWithExcel = new ActionWithExcel();
+                motherBoardTrim.Add(ActionWithExcel.UpdateExcelDocForReadMotherBoard(pathToDoc, numSheet, partNumber.TrimEnd(PartNumberTrim)));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

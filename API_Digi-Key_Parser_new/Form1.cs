@@ -103,73 +103,188 @@ namespace API_Digi_Key_Parser_new
         }
         private void pathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!CheckBtnWrkSlt)
+            try
             {
-                CheckBtnWrkSlt = true;
-                if (yesToolStripMenuItem.Enabled != false)
-                    GetPathDirectory();
-                Thread.Sleep(250);
-                toolStripTextBox1.Text = Open_dialog();
-                FindAllFileOnLocalServer(toolStripTextBox4.Text);
+                if (!CheckBtnWrkSlt)
+                {
+                    CheckBtnWrkSlt = true;
+                    if (yesToolStripMenuItem.Enabled != false)
+                        GetPathDirectory();
+                    Thread.Sleep(250);
+                    toolStripTextBox1.Text = Open_dialog();
+                    FindAllFileOnLocalServer(toolStripTextBox4.Text);
+                }
+                else
+                {
+                    DialogResult result;
+                    result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
             }
-            else
+            catch(Exception ex)
+            {
+                textBox1.AppendText("Directory path error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
+            }
+        }
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        private void parsingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!CheckBtnParsing)   //Checking tap button "Parsing"
+            {
+                if (toolStripTextBox1.TextLength > 1)
+                {
+                    if (toolStripTextBox4.TextLength > 1)   //System.NullReferenceException
+                    {
+                        oAuthToolStripMenuItem.Enabled = false;
+                        saveToolStripMenuItem.Enabled = false;
+                        pathToolStripMenuItem.Enabled = false;
+                        CheckBtnParsing = true;
+                        CheckBtnSave = false;
+                        label1.Text = "Processing...";
+                        TaskRun(PathInfoPartNumbers);
+                    }
+                    else
+                    {
+                        DialogResult result;
+                        result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    }
+                }
+                else
+                {
+                    DialogResult result;
+                    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+            }
+        }
+        private async void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                oAuthToolStripMenuItem.Enabled = false;
+
+                OAuth OAuth = new OAuth();
+                string StrOut = await OAuth.Authorize();
+
+                textBox1.AppendText(StrOut + Environment.NewLine);    //for info
+            }
+            catch (Exception ex)
+            {
+                textBox1.AppendText("Authorization error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckBtnSave)
+            {
+                SaveExcelDoc();
+            }
+            else if (!CheckBtnParsing)
             {
                 DialogResult result;
-                result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                result = MessageBox.Show("Please run the parser!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
+            else if (CheckBtnParsing)
+            {
+                DialogResult result;
+                result = MessageBox.Show("Please wait for the parser to finish working!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+        }
+        private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            about_program.ShowDialog();
+        }
+        private void yesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            noToolStripMenuItem.Enabled = true;
+            yesToolStripMenuItem.Enabled = false;
+        }
+        private void noToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            yesToolStripMenuItem.Enabled = true;
+            noToolStripMenuItem.Enabled = false;
         }
         void SaveExcelDoc()
         {
-            string[] MassHead = new string[] { "PartNumber", "Description", "Package", "Adapters", "MotherBoard", "Engineer", "Difficulty" };
-
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook workBook;                // Создаём экземпляр рабочий книги Excel
-            Excel.Worksheet workSheet;              // Создаём экземпляр листа Excel
-
-            workBook = excelApp.Workbooks.Add();
-            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
-
-
-            for (int i = 0, j = 1; i < MassHead.Length; i++, j++)   //Заполняем шапку таблицы
+            try
             {
-                workSheet.Cells[1, j] = MassHead[i];
-            }
-            for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем таблицу
-            {
-                workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
-                if (Parser.Family[i] != "Out of Bounds")
-                    workSheet.Cells[j, 2] = Parser.Family[i];
-                else
-                    workSheet.Cells[j, 2] = "null";
-                workSheet.Cells[j, 3] = Parser.Package[i];
-                if (Parser.PassiveComponents[i] != "Passive")
-                    workSheet.Cells[j, 4] = Parser.UniversalEquipment[i];
-                else
-                    workSheet.Cells[j, 4] = Parser.PassiveComponents[i];
-                workSheet.Cells[j, 6] = Parser.Enginner[i];
-                if (Parser.PassiveComponents[i] != "Passive")
-                    workSheet.Cells[j, 5] = Parser.MotherBoard[i];
-                if ((Parser.Difficulty[i] == 4) && (Parser.MotherBoard[i] != "null") && (Parser.MotherBoard[i] != "Passive"))
-                    workSheet.Cells[j, 7] = Parser.Difficulty[i] - 1;
-                else
-                    workSheet.Cells[j, 7] = Parser.Difficulty[i];
-                if (Parser.MotherBoard[i] == "null")
-                    if (Parser.MotherBoardTrim[i] != "null")
-                        workSheet.Cells[j, 5] = "match";
-                    else if(Parser.PassiveComponents[i] != "Passive")
-                        workSheet.Cells[j, 5] = Parser.MotherBoardTrim[i];
+                string[] MassHead = new string[] { "PartNumber", "Description", "Package", "Adapters", "MotherBoard", "Engineer", "Difficulty" };
+
+                Excel.Application excelApp = new Excel.Application();
+                Excel.Workbook workBook;                // Создаём экземпляр рабочий книги Excel
+                Excel.Worksheet workSheet;              // Создаём экземпляр листа Excel
+
+                workBook = excelApp.Workbooks.Add();
+                workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);
+
+
+                for (int i = 0, j = 1; i < MassHead.Length; i++, j++)   //Заполняем шапку таблицы
+                {
+                    workSheet.Cells[1, j] = MassHead[i];
+                }
+                for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем таблицу
+                {
+                    workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
+                    if (Parser.Family[i] != "Out of Bounds")
+                        workSheet.Cells[j, 2] = Parser.Family[i];
                     else
-                        workSheet.Cells[j, 5] = Parser.PassiveComponents[i];
-            }
-            workSheet.Columns.EntireColumn.AutoFit();
-            
-            /* Enable filter on sheet
-             * Excel.Range target = workSheet.get_Range("A1:G1");
-             * workSheet.Cells.AutoFilter(1, target, Excel.XlAutoFilterOperator.xlAnd, true);
-             */
+                        workSheet.Cells[j, 2] = "null";
+                    workSheet.Cells[j, 3] = Parser.Package[i];
+                    if (Parser.PassiveComponents[i] != "Passive")
+                        workSheet.Cells[j, 4] = "null"; 
+                    else
+                        workSheet.Cells[j, 4] = Parser.PassiveComponents[i];
+                    workSheet.Cells[j, 6] = Parser.Enginner[i];
+                    if (Parser.PassiveComponents[i] != "Passive")
+                        workSheet.Cells[j, 5] = Parser.MotherBoard[i];
+                    if ((Parser.Difficulty[i] == 4) && (Parser.MotherBoard[i] != "null") && (Parser.PassiveComponents[i] != "Passive"))
+                        workSheet.Cells[j, 7] = Parser.Difficulty[i] - 1;
+                    else
+                        workSheet.Cells[j, 7] = Parser.Difficulty[i];
+                    if (Parser.MotherBoard[i] == "null")
+                        if (Parser.MotherBoardTrim[i] != "null")
+                            workSheet.Cells[j, 5] = "match";
+                        else if (Parser.PassiveComponents[i] != "Passive")
+                            workSheet.Cells[j, 5] = Parser.MotherBoardTrim[i];
+                        else
+                            workSheet.Cells[j, 5] = Parser.PassiveComponents[i];
+                    if ((Parser.PassiveComponents[i] != "Passive") && (Parser.MotherBoard[i] == "null") && (Parser.MotherBoardTrim[i] != "match"))
+                        workSheet.Cells[j, 5] = Parser.UniversalEquipment[i];
+                }
+                workSheet.Columns.EntireColumn.AutoFit();
 
-            excelApp.Visible = true;                    // Открываем созданный excel-файл
-            excelApp.UserControl = true;
+                /* Enable filter on sheet
+                 * Excel.Range target = workSheet.get_Range("A1:G1");
+                 * workSheet.Cells.AutoFilter(1, target, Excel.XlAutoFilterOperator.xlAnd, true);
+                 */
+
+                excelApp.Visible = true;                    // Открываем созданный excel-файл
+                excelApp.UserControl = true;
+            }
+            catch (Exception ex)
+            {
+                textBox1.AppendText("Creating a file error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
+            }
         }
         string Open_dialog()
         {
@@ -210,7 +325,13 @@ namespace API_Digi_Key_Parser_new
             }
             catch(Exception ex)
             { 
-                textBox1.AppendText(ex.Message);
+                textBox1.AppendText("File Detection error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
             }
             //BeginInvoke(new MyDelegate(test2));
             BeginInvoke(new MyDelegate(CheckCorrectPath));
@@ -246,71 +367,6 @@ namespace API_Digi_Key_Parser_new
             }
             return "null";
         }
-        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-        private void parsingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!CheckBtnParsing)   //Checking tap button "Parsing"
-            {
-                if (toolStripTextBox1.TextLength > 1)
-                {
-                    if (toolStripTextBox4.TextLength > 1)   //System.NullReferenceException
-                    {
-                        oAuthToolStripMenuItem.Enabled = false;
-                        saveToolStripMenuItem.Enabled = false;
-                        pathToolStripMenuItem.Enabled = false;
-                        CheckBtnParsing = true;
-                        CheckBtnSave = false;
-                        label1.Text = "Processing...";
-                        TaskRun(PathInfoPartNumbers);
-                    }
-                    else
-                    {
-                        DialogResult result;
-                        result = MessageBox.Show("Please select the working directory in the settings!", "Working directory not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                    }
-                }
-                else
-                {
-                    DialogResult result;
-                    result = MessageBox.Show("Please select the path to the file!", "File not selected", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                }
-            }
-        }
-
-        private async void oAuthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            oAuthToolStripMenuItem.Enabled = false;
-
-            OAuth OAuth = new OAuth();
-            string StrOut = await OAuth.Authorize();
-
-            textBox1.AppendText(StrOut + Environment.NewLine);    //for info
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (CheckBtnSave)
-            {
-                SaveExcelDoc();
-            }
-            else if (!CheckBtnParsing)
-            {
-                DialogResult result;
-                result = MessageBox.Show("Please run the parser!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            }
-            else if (CheckBtnParsing)
-            {
-                DialogResult result;
-                result = MessageBox.Show("Please wait for the parser to finish working!", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            }
-        }
-        private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            about_program.ShowDialog();
-        }
         void GetPathDirectory()
         {
             openFileDialog1.ValidateNames = false;
@@ -326,7 +382,7 @@ namespace API_Digi_Key_Parser_new
         {
             try
             {
-                Parser = new Parser();      /*FindPathToFile(@"\InfoPartNumberPass.xlsx"), FindPathToFile(@"\Universal.xlsx"), FindPathToFile(@"\InfoEngineers.xlsx")*/
+                Parser = new Parser();
                 string StrOut = await Parser.ParserInit();
 
                 textBox1.AppendText(StrOut + Environment.NewLine);    //for info
@@ -344,7 +400,13 @@ namespace API_Digi_Key_Parser_new
             }
             catch(Exception ex)
             {
-                textBox1.AppendText(ex.Message);
+                textBox1.AppendText("Initialization error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
             }
         }
         async Task OutData(IProgress<int> p)
@@ -362,30 +424,54 @@ namespace API_Digi_Key_Parser_new
             }
             catch(Exception ex)
             {
-                textBox1.AppendText(ex.Message);    
+                textBox1.AppendText("Search error: " + ex.Message);
+                label1.Text = "Error";
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
             }
         }
         void DocBuild_DoWork(object sender, DoWorkEventArgs e)
         {
-            int Progress = ProcessedPartNumbers.Count - 1;
-            for (int i = 0; i < ProcessedPartNumbers.Count; i++)
+            try
             {
-                Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
-                Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
-                Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);   //@"\engineers.xlsx"
-                Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]); //@"\engineers.xlsx"
-                Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
-                Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
-                DocBuild.ReportProgress(Progress++);
+                int Progress = ProcessedPartNumbers.Count - 1;
+                for (int i = 0; i < ProcessedPartNumbers.Count; i++)
+                {
+                    Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
+                    Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
+                    Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);   //@"\engineers.xlsx"
+                    Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]); //@"\engineers.xlsx"
+                    Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
+                    Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
+                    DocBuild.ReportProgress(Progress++);
+                }
+                e.Result = "Completed";
             }
-            e.Result = "Completed";
+            catch(Exception)
+            {
+                throw;
+            }
         }
         void DocBuild_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if(e.Cancelled)
-                textBox1.Text += "Interrupted by user" + Environment.NewLine;
+            if (e.Cancelled)
+            {
+                textBox1.AppendText("Interrupted: The process was interrupted by the user." + Environment.NewLine);
+                label1.Text = "Ready" + Environment.NewLine;
+            }
             else if (e.Error != null)
-                textBox1.Text += "Interrupted" + Environment.NewLine;
+            {
+                textBox1.AppendText("Interrupted: There is no access to some files or the files are occupied by another process." + Environment.NewLine);
+                label1.Text = "Error" + Environment.NewLine;
+                CheckBtnParsing = false;
+                CheckBtnSave = true;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
+            }
             else
             {
                 label1.Text = e.Result + Environment.NewLine;
@@ -399,16 +485,6 @@ namespace API_Digi_Key_Parser_new
         void DocBuild_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
-        }
-        private void yesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            noToolStripMenuItem.Enabled = true;
-            yesToolStripMenuItem.Enabled = false;
-        }
-        private void noToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            yesToolStripMenuItem.Enabled = true;
-            noToolStripMenuItem.Enabled = false;
         }
     }
 }
