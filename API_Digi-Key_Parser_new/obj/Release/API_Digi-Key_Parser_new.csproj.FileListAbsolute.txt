@@ -1,8 +1,3 @@
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser_new.exe.config
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser_new.exe.manifest
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser_new.application
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser_new.exe
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser_new.pdb
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\ApiClient.dll.config
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\Common.Logging.xml
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\Common.Logging.Core.xml
@@ -12,7 +7,6 @@ D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\System.Net.Http.Formatting.xml
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\System.Web.Http.xml
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.csproj.AssemblyReference.cache
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.exe.config
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\Interop.Office.dll
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\Interop.Shell32.dll
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.csproj.ResolveComReference.cache
@@ -22,7 +16,13 @@ D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.csproj.GenerateResource.cache
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.csproj.CoreCompileInputs.cache
 D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.csproj.Fody.CopyLocal.cache
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.exe.manifest
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.application
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.exe
-D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser_new.pdb
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser.exe.config
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser.exe.manifest
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser.application
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser.exe
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\bin\Release\API_Digi-Key_Parser.pdb
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser.exe.config
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser.exe.manifest
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser.application
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser.exe
+D:\STUDIES\C#_exercise\Digi-Key\API_Digi-Key_Parser\API_Digi-Key_Parser_new\obj\Release\API_Digi-Key_Parser.pdb

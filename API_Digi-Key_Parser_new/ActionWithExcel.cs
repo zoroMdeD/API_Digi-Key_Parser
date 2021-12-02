@@ -122,7 +122,7 @@ namespace API_Digi_Key_Parser_new
                 ConnectToExcel = new ConnectToExcel(@Path);
                 listNameSheets = ConnectToExcel.GetWorksheetNames(ConnectToExcel);
                 ListOfPartNumbers = new ListOfPartNumbers(@Path, listNameSheets[NumSheet]);
-                outValue = ListOfPartNumbers.GetListInfoExcelDocDifficulty(ConnectToExcel, Family);
+                outValue = int.Parse(ListOfPartNumbers.GetListInfoExcelDocDifficulty(ConnectToExcel, Family));
                 return outValue;
             }
             catch (Exception) 

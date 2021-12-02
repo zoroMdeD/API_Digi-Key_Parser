@@ -51,7 +51,7 @@ namespace API_Digi_Key_Parser_new
         public string Description { get; set; }         //Universal equipment
         public string BuildNumber { get; set; }         //Universal equipment
         public string Engineer { get; set; }            //Input file Engineers
-        public int Difficulty { get; set; }             //Input file Engineers
+        public string Difficulty { get; set; }             //Input file Engineers
         public string MotherBoard { get; set; }         //Input file MotherBoard
 
         public ListOfPartNumbers(string PathToExcelFile, string NameOfSheet = "Лист1")
@@ -153,11 +153,11 @@ namespace API_Digi_Key_Parser_new
                 throw;
             }
         }
-        public int GetListInfoExcelDocDifficulty(ConnectToExcel ConnectToExcel, string Family)
+        public string GetListInfoExcelDocDifficulty(ConnectToExcel ConnectToExcel, string Family)
         {
             try
             {
-                int Difficulty = 0;
+                string Difficulty = string.Empty;
                 //Query a worksheet with a header row (sintax SQL-Like LINQ)
                 var GetSheet = from a in ConnectToExcel.UrlConnexion.Worksheet<ListOfPartNumbers>(nameOfSheet)
                                select a;
@@ -169,7 +169,7 @@ namespace API_Digi_Key_Parser_new
                         return Difficulty;
                     }
                 }
-                return -1;
+                return "-1";
             }
             catch(Exception)
             {

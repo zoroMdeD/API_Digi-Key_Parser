@@ -187,7 +187,7 @@ namespace API_Digi_Key_Parser_new
 
                     return "After call to refresh" + Environment.NewLine + settings.ToString();
                 }
-                return Environment.NewLine + "Parsing...";
+                return Environment.NewLine + "Ready";
             }
             catch (Exception)
             {
@@ -227,11 +227,11 @@ namespace API_Digi_Key_Parser_new
 
                 Family.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
                 FindPackage(response);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+           }
+           catch (Exception)
+           {
+               throw;
+           }
         }
         private void FindPackage(string response)
         {

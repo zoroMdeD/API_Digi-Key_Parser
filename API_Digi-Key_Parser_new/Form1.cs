@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ApiClient.Models;
 using ApiClient.OAuth2;
 using ApiClient;
+using ApiClient.Exception;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,6 +14,7 @@ using System.Threading;
 using System.ComponentModel;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
+using System.Web.Http;
 
 namespace API_Digi_Key_Parser_new
 {
@@ -34,14 +36,17 @@ namespace API_Digi_Key_Parser_new
         public delegate void MyDelegate();      //Для доступа к элементам из другого потока с передачей параметров
         static BackgroundWorker DocBuild;
 
+        CancellationTokenSource cts;
+
         public Form1()
         {
             InitializeComponent();
 
             yesToolStripMenuItem.Enabled = false;
-            toolStripTextBox4.Text = @"X:\DataBase\Test_2\Test_API_DigiKey";    //X:\DataBase\Parser\Parser_API
+            toolStripTextBox4.Text = @"X:\DataBase\Parser\Parser_API";    //X:\DataBase\Parser\Parser_API     X:\DataBase\Test_2\Test_API_DigiKey
 
             DocBuild = new BackgroundWorker();
+            DocBuild.WorkerSupportsCancellation = true;
             DocBuild.WorkerReportsProgress = true;
             DocBuild.DoWork += DocBuild_DoWork;
             DocBuild.ProgressChanged += DocBuild_ProgressChanged;
@@ -59,8 +64,7 @@ namespace API_Digi_Key_Parser_new
             {
                 if (toolStripTextBox1.TextLength > 1)   //System.NullReferenceException
                 {
-                    //if ((toolStripTextBox4.TextLength > 1) || (teststr.Contains("\\Test_API_DigiKey")))   //System.NullReferenceException
-                    if (WorkDirPath[0].Contains("\\Test_API_DigiKey"))    //"\\Parser_API"
+                    if (WorkDirPath[0].Contains("\\Parser_API"))    //"\\Parser_API"      "\\Test_API_DigiKey"
                     {
                         oAuthToolStripMenuItem.Enabled = false;
                         saveToolStripMenuItem.Enabled = false;
@@ -122,10 +126,9 @@ namespace API_Digi_Key_Parser_new
             }
             catch(Exception ex)
             {
-                textBox1.AppendText("Directory path error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "Directory path error: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
@@ -173,14 +176,13 @@ namespace API_Digi_Key_Parser_new
                 OAuth OAuth = new OAuth();
                 string StrOut = await OAuth.Authorize();
 
-                textBox1.AppendText(StrOut + Environment.NewLine);    //for info
+                textBox1.AppendText(Environment.NewLine + StrOut);    //for info
             }
             catch (Exception ex)
             {
-                textBox1.AppendText("Authorization error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "Authorization error: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
@@ -217,6 +219,14 @@ namespace API_Digi_Key_Parser_new
         {
             yesToolStripMenuItem.Enabled = true;
             noToolStripMenuItem.Enabled = false;
+        }
+        private void abortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CheckBtnParsing)
+                if (DocBuild.IsBusy)
+                    DocBuild.CancelAsync();
+                else
+                    cts.Cancel();
         }
         void SaveExcelDoc()
         {
@@ -277,10 +287,9 @@ namespace API_Digi_Key_Parser_new
             }
             catch (Exception ex)
             {
-                textBox1.AppendText("Creating a file error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "Creating a file error: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
@@ -309,9 +318,7 @@ namespace API_Digi_Key_Parser_new
             try
             {
                 int ienum = 0;
-                WorkDirPath[0] = @strPath;//Directory.GetDirectories(@strPath);//, "Test_API_DigiKey", SearchOption.AllDirectories);
-
-                //textBox1.AppendText(allFoundFiles[0] + Environment.NewLine);    //for debug
+                WorkDirPath[0] = @strPath;
                 RecursiveFileProcessor RecursiveFileProcessor = new RecursiveFileProcessor(WorkDirPath);
                 RecursiveFileProcessor.RunProcessor(RecursiveFileProcessor.GetPath);
                 MassPathFile = new string[RecursiveFileProcessor.OutPath.Count];
@@ -319,21 +326,18 @@ namespace API_Digi_Key_Parser_new
                 {
                     MassPathFile[ienum] = GetLnkTarget(RecursiveFileProcessor.OutPath[ienum]);
                     ienum++;
-                    //textBox1.AppendText(item + Environment.NewLine);    //for debug
                 }
                 CheckBtnWrkSlt = false;
             }
             catch(Exception ex)
             { 
-                textBox1.AppendText("File Detection error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "File Detection error: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
             }
-            //BeginInvoke(new MyDelegate(test2));
             BeginInvoke(new MyDelegate(CheckCorrectPath));
         }
         public static string GetLnkTarget(string lnkPath)   //Method get path an link
@@ -349,8 +353,7 @@ namespace API_Digi_Key_Parser_new
         {
             if (WorkDirPath.Length > 0)
             {
-                textBox1.AppendText(Environment.NewLine + $"Working directory: {WorkDirPath[0]}" + Environment.NewLine +
-                                                          $"Source file: {PathInfoPartNumbers}" + Environment.NewLine);                         //for more info
+                textBox1.AppendText($"Working directory: {WorkDirPath[0]}" + Environment.NewLine + $"Source file: {PathInfoPartNumbers}");  //for more info
             }
             else
             {
@@ -385,7 +388,10 @@ namespace API_Digi_Key_Parser_new
                 Parser = new Parser();
                 string StrOut = await Parser.ParserInit();
 
-                textBox1.AppendText(StrOut + Environment.NewLine);    //for info
+                cts = new CancellationTokenSource();
+                CancellationToken token = cts.Token;
+
+                textBox1.AppendText(Environment.NewLine + StrOut);    //for info
 
                 ActionWithExcel ActionWithExcel = new ActionWithExcel();
                 ProcessedPartNumbers = Parser.FindSpecialSymbol(ActionWithExcel.UpdateExcelDoc(Path, 0));
@@ -396,42 +402,76 @@ namespace API_Digi_Key_Parser_new
                 progressBar1.Minimum = 0;
                 progressBar1.Maximum = (ProcessedPartNumbers.Count - 1)*2;
                 // pass this instance to the background task
-                _ = OutData(progress);
+                _ = OutData(progress, token);
             }
             catch(Exception ex)
             {
-                textBox1.AppendText("Initialization error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "Initialization error: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
             }
         }
-        async Task OutData(IProgress<int> p)
+        async Task OutData(IProgress<int> p, CancellationToken token)
         {
-            try
+            bool ExFlag = false;
+            string status = "Ready";
+            textBox1.AppendText(Environment.NewLine + "Parsing...");
+            for (int i = 0; i < ProcessedPartNumbers.Count; i++)
             {
-                for (int i = 0; i < ProcessedPartNumbers.Count; i++)
+                if (token.IsCancellationRequested)
+                {
+                    if (!ExFlag)
+                        textBox1.AppendText(Environment.NewLine + "Interrupted: The process was interrupted by the user.");    
+                    label1.Text = status;
+                    p.Report(0);
+                    CheckBtnParsing = false;
+                    oAuthToolStripMenuItem.Enabled = true;
+                    saveToolStripMenuItem.Enabled = true;
+                    pathToolStripMenuItem.Enabled = true;
+                    cts.Dispose();
+                    return;
+                }
+                try
                 {
                     await Parser.FindDescPack(ProcessedPartNumbers[i]);
-
-                    p.Report(i);
                 }
+                catch(AggregateException)
+                {
+                    ExFlag = true;
+                    textBox1.AppendText(Environment.NewLine + "Request limit exceeded: 0 out of 1000 requests left");
+                    cts.Cancel();
+                    status = "Error";
+                }
+                catch(NullReferenceException ex)
+                {
+                    ExFlag = true;
+                    textBox1.AppendText(Environment.NewLine + "Authorization error: The token is outdated" + ex.Message);
+                    cts.Cancel();
+                    status = "Error";
+                }
+                catch(Exception)
+                {
+                    ExFlag = true;
+                    textBox1.AppendText(Environment.NewLine + "Unhandled exception: Something went wrong");
+                    cts.Cancel();
+                    status = "Error";
+                }
+                p.Report(i);
 
-                DocBuild.RunWorkerAsync(null);
             }
-            catch(Exception ex)
+                        /*            catch(HttpResponseException ex)
             {
-                textBox1.AppendText("Search error: " + ex.Message);
+                textBox1.AppendText(Environment.NewLine + "Request limit exceeded: " + ex.Message);
                 label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
-            }
+            }*/
+            DocBuild.RunWorkerAsync(null);
         }
         void DocBuild_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -440,12 +480,17 @@ namespace API_Digi_Key_Parser_new
                 int Progress = ProcessedPartNumbers.Count - 1;
                 for (int i = 0; i < ProcessedPartNumbers.Count; i++)
                 {
+                    if(DocBuild.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                     Parser.FindPassiveComponents(FindPathToFile(@"\InfoPartNumberPass.xlsx"), 0, Parser.Family[i]);
                     Parser.FindUniversalEquipment(FindPathToFile(@"\Universal.xlsx"), 0, Parser.Family[i]);
-                    Parser.FindEngineer(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]);   //@"\engineers.xlsx"
-                    Parser.FindDifficulty(FindPathToFile(@"\InfoEngineers.xlsx"), 0, Parser.Family[i]); //@"\engineers.xlsx"
-                    Parser.FindMotherBoard(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
-                    Parser.FindMotherBoardTrim(FindPathToFile(@"\InfoMotherBoard.xlsx"), 8, ProcessedPartNumbers[i]);  //@"\Сборки,платы.xlsx"
+                    Parser.FindEngineer(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);                   //@"\engineers.xlsx"        @"\InfoEngineers.xlsx"
+                    Parser.FindDifficulty(FindPathToFile(@"\engineers.xlsx"), 0, Parser.Family[i]);                 //@"\engineers.xlsx"        @"\InfoEngineers.xlsx"
+                    Parser.FindMotherBoard(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);       //@"\Сборки,платы.xlsx"     @"\InfoMotherBoard.xlsx"
+                    Parser.FindMotherBoardTrim(FindPathToFile(@"\Сборки,платы.xlsx"), 8, ProcessedPartNumbers[i]);   //@"\Сборки,платы.xlsx"     @"\InfoMotherBoard.xlsx"
                     DocBuild.ReportProgress(Progress++);
                 }
                 e.Result = "Completed";
@@ -459,22 +504,27 @@ namespace API_Digi_Key_Parser_new
         {
             if (e.Cancelled)
             {
-                textBox1.AppendText("Interrupted: The process was interrupted by the user." + Environment.NewLine);
-                label1.Text = "Ready" + Environment.NewLine;
+                textBox1.AppendText(Environment.NewLine + "Interrupted: The process was interrupted by the user." + Environment.NewLine);
+                BeginInvoke(new MyDelegate(RefreshPB));
+                label1.Text = "Ready";
+                CheckBtnParsing = false;
+                oAuthToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+                pathToolStripMenuItem.Enabled = true;
             }
             else if (e.Error != null)
             {
-                textBox1.AppendText("Interrupted: There is no access to some files or the files are occupied by another process." + Environment.NewLine);
-                label1.Text = "Error" + Environment.NewLine;
+                textBox1.AppendText(Environment.NewLine + "Interrupted: There is no access to some files or the files are occupied by another process." + Environment.NewLine);
+                BeginInvoke(new MyDelegate(RefreshPB));
+                label1.Text = "Error";
                 CheckBtnParsing = false;
-                CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 pathToolStripMenuItem.Enabled = true;
             }
             else
             {
-                label1.Text = e.Result + Environment.NewLine;
+                label1.Text = (string)e.Result;
                 CheckBtnParsing = false;
                 CheckBtnSave = true;
                 oAuthToolStripMenuItem.Enabled = true;
@@ -485,6 +535,10 @@ namespace API_Digi_Key_Parser_new
         void DocBuild_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
+        }
+        void RefreshPB()
+        {
+            progressBar1.Value = 0;
         }
     }
 }
