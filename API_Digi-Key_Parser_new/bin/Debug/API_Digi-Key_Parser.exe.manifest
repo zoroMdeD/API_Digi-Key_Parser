@@ -50,17 +50,17 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0RTco6r2NWobn+R4b9sKECYhgZTLLfFRctSAFRn06aQ=</dsig:DigestValue>
+        <dsig:DigestValue>8QwTrmHjmE0FHTZFKa7PYABLasvuQt5fZXnqwy8QQFg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="API_Digi-Key_Parser.exe.config" size="1094">
+  <file name="API_Digi-Key_Parser.exe.config" size="1072">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>Jwtlb2GEe2zpNoF5sEOlExZvVQWzU3cC3IFE0hh1Pp8=</dsig:DigestValue>
+      <dsig:DigestValue>sBlDdPdsxCUuIDrC1yplXdkdZSpnNuAlFEO1FwedUBI=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ASK1.ico" size="40830">

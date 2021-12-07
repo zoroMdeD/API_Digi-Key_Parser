@@ -452,10 +452,10 @@ namespace API_Digi_Key_Parser_new
                     cts.Cancel();
                     status = "Error";
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
                     ExFlag = true;
-                    textBox1.AppendText(Environment.NewLine + "Unhandled exception: Something went wrong");
+                    textBox1.AppendText(Environment.NewLine + "Unhandled exception: Something went wrong" + ex.Message);
                     cts.Cancel();
                     status = "Error";
                 }

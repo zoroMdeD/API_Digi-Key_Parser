@@ -241,12 +241,11 @@ namespace API_Digi_Key_Parser_new
                 if (response.IndexOf(subStr) != -1)
                 {
                     startIndex = response.IndexOf(subStr);
-                    endIndex = response.IndexOf("\"Parameter\":\"Supplier Device Package\",");
-                    string tmp = response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length));
+                    response = response.Substring(startIndex);
                     subStr = "\"Value\":";
-                    startIndex = tmp.IndexOf(subStr);
-                    endIndex = tmp.IndexOf('}');
-                    Package.Add((tmp.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+                    startIndex = response.IndexOf(subStr);
+                    endIndex = response.IndexOf("}");
+                    Package.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
                 }
                 else
                 {
