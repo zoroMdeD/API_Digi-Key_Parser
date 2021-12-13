@@ -249,10 +249,11 @@ namespace API_Digi_Key_Parser_new
                 for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем таблицу
                 {
                     workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
-                    if (Parser.Family[i] != "Out of Bounds")
+                    //if (Parser.Family[i] != "Out of Bounds")
                         workSheet.Cells[j, 2] = Parser.Family[i];
-                    else
-                        workSheet.Cells[j, 2] = "null";
+                    //else
+                    //    workSheet.Cells[j, 2] = "null";
+                    
                     workSheet.Cells[j, 3] = Parser.Package[i];
                     if (Parser.PassiveComponents[i] != "Passive")
                         workSheet.Cells[j, 4] = "null"; 

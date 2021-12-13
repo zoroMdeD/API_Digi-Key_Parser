@@ -74,6 +74,8 @@ namespace API_Digi_Key_Parser_new
                                select a;
                 foreach (var result in GetSheet)
                 {
+                    if (result.PartNumber == null)      
+                        break;
                     MassPartNumber.Add(result.PartNumber);
                 }
                 return MassPartNumber;

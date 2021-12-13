@@ -221,41 +221,80 @@ namespace API_Digi_Key_Parser_new
             {
                 var response = await client.KeywordSearch(partNumber);
 
+                subStr = "\"ExactManufacturerProductsCount\":";
+                startIndex = response.IndexOf(subStr);
+                string tmpResponse = response.Substring(startIndex);
+                startIndex = tmpResponse.IndexOf(subStr);
+                endIndex = tmpResponse.IndexOf(',');
+                int num = int.Parse((tmpResponse.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+                if (num != 0)
+                    FindFamily(FindPackage(tmpResponse));
+                else
+                    FindPackage(FindFamily(response, partNumber));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void FindFamily(string response)
+        {
+            subStr = "\"Family\",\"Value\":";
+            if (response.IndexOf(subStr) != -1)
+            {
+                startIndex = response.IndexOf(subStr);
+                response = response.Substring(startIndex);
                 subStr = "\"Value\":";
                 startIndex = response.IndexOf(subStr);
                 endIndex = response.IndexOf('}');
 
                 Family.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
-                FindPackage(response);
-           }
-           catch (Exception)
-           {
-               throw;
-           }
+            }
+            else
+            {
+                Family.Add("null");
+            }
         }
-        private void FindPackage(string response)
+        private string FindFamily(string response, string partNumber)
         {
-            try
+            subStr = $"{partNumber}/";
+            if (response.IndexOf(subStr) != -1)
             {
-                subStr = "\"Parameter\":\"Package / Case\",";
-                if (response.IndexOf(subStr) != -1)
-                {
-                    startIndex = response.IndexOf(subStr);
-                    response = response.Substring(startIndex);
-                    subStr = "\"Value\":";
-                    startIndex = response.IndexOf(subStr);
-                    endIndex = response.IndexOf("}");
-                    Package.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
-                }
-                else
-                {
-                    Package.Add("null");
-                }
+                startIndex = response.IndexOf(subStr);
+                response = response.Substring(startIndex);
+                subStr = "\"Family\",\"Value\":";
+                startIndex = response.IndexOf(subStr);
+                response = response.Substring(startIndex);
+                startIndex = response.IndexOf(subStr);
+                endIndex = response.IndexOf('}');
+
+                Family.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
             }
-            catch(Exception)
+            else
             {
-                throw;
+                Family.Add("null");
             }
+
+            return response;
+        }
+        private string FindPackage(string response)
+        {
+            subStr = "\"Parameter\":\"Package / Case\",";
+            if (response.IndexOf(subStr) != -1)
+            {
+                startIndex = response.IndexOf(subStr);
+                response = response.Substring(startIndex);
+                subStr = "\"Value\":";
+                startIndex = response.IndexOf(subStr);
+                endIndex = response.IndexOf("}");
+                Package.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
+            }
+            else
+            {
+                Package.Add("null");
+            }
+
+            return response;
         }
         public void FindPassiveComponents(string pathToDoc, int numSheet, string family)
         {

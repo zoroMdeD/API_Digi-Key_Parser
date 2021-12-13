@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="API_Digi-Key_Parser.exe" size="1176008">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="API_Digi-Key_Parser.exe" size="1176520">
       <assemblyIdentity name="API_Digi-Key_Parser" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>T/zYB3aSQZqRnn2zDdrbE36wikqQXFXOvDvz+94/9iI=</dsig:DigestValue>
+        <dsig:DigestValue>mOHOnSuTiIys36Vy57/byymR3FmvgOBUsvlqAR/kiZc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
