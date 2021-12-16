@@ -230,7 +230,7 @@ namespace API_Digi_Key_Parser_new
                 if (num != 0)
                     FindFamily(FindPackage(tmpResponse));
                 else
-                    FindPackage(FindFamily(response, partNumber));
+                    FindFamily(FindPackage(response));
             }
             catch (Exception)
             {
@@ -254,28 +254,6 @@ namespace API_Digi_Key_Parser_new
             {
                 Family.Add("null");
             }
-        }
-        private string FindFamily(string response, string partNumber)
-        {
-            subStr = $"{partNumber}/";
-            if (response.IndexOf(subStr) != -1)
-            {
-                startIndex = response.IndexOf(subStr);
-                response = response.Substring(startIndex);
-                subStr = "\"Family\",\"Value\":";
-                startIndex = response.IndexOf(subStr);
-                response = response.Substring(startIndex);
-                startIndex = response.IndexOf(subStr);
-                endIndex = response.IndexOf('}');
-
-                Family.Add((response.Substring(startIndex + subStr.Length, endIndex - (startIndex + subStr.Length))).Trim(charToTrim));
-            }
-            else
-            {
-                Family.Add("null");
-            }
-
-            return response;
         }
         private string FindPackage(string response)
         {
