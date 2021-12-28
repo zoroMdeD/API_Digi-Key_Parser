@@ -142,7 +142,7 @@ namespace API_Digi_Key_Parser_new
             this.parsingToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("parsingToolStripMenuItem.Image")));
             this.parsingToolStripMenuItem.Name = "parsingToolStripMenuItem";
             this.parsingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.parsingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.parsingToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.parsingToolStripMenuItem.Text = "Parsing";
             this.parsingToolStripMenuItem.Click += new System.EventHandler(this.parsingToolStripMenuItem_Click);
             // 
@@ -152,7 +152,7 @@ namespace API_Digi_Key_Parser_new
             this.oAuthToolStripMenuItem.Name = "oAuthToolStripMenuItem";
             this.oAuthToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.O)));
-            this.oAuthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.oAuthToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.oAuthToolStripMenuItem.Text = "OAuth";
             this.oAuthToolStripMenuItem.Click += new System.EventHandler(this.oAuthToolStripMenuItem_Click);
             // 
@@ -161,7 +161,7 @@ namespace API_Digi_Key_Parser_new
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -169,7 +169,7 @@ namespace API_Digi_Key_Parser_new
             // 
             this.abortToolStripMenuItem.Name = "abortToolStripMenuItem";
             this.abortToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.abortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.abortToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.abortToolStripMenuItem.Text = "Abort";
             this.abortToolStripMenuItem.Click += new System.EventHandler(this.abortToolStripMenuItem_Click);
             // 
@@ -177,7 +177,7 @@ namespace API_Digi_Key_Parser_new
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -196,7 +196,7 @@ namespace API_Digi_Key_Parser_new
             this.toolStripTextBox4,
             this.changeWorkDirToolStripMenuItem});
             this.toolStripMenuItem.Name = "toolStripMenuItem";
-            this.toolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.toolStripMenuItem.Text = "Work directory path";
             // 
             // toolStripTextBox4
@@ -238,7 +238,7 @@ namespace API_Digi_Key_Parser_new
             this.partnumbersPathToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripTextBox1});
             this.partnumbersPathToolStripMenuItem.Name = "partnumbersPathToolStripMenuItem";
-            this.partnumbersPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.partnumbersPathToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.partnumbersPathToolStripMenuItem.Text = "Part numbers path";
             // 
             // toolStripTextBox1
@@ -260,7 +260,7 @@ namespace API_Digi_Key_Parser_new
             this.viewHelpToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("viewHelpToolStripMenuItem.Image")));
             this.viewHelpToolStripMenuItem.Name = "viewHelpToolStripMenuItem";
             this.viewHelpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.viewHelpToolStripMenuItem.Text = "View Help";
             this.viewHelpToolStripMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
             // 

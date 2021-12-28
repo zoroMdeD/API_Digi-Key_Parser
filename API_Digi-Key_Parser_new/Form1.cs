@@ -249,11 +249,7 @@ namespace API_Digi_Key_Parser_new
                 for (int i = 0, j = 2; i < ProcessedPartNumbers.Count; i++, j++)   //Заполняем таблицу
                 {
                     workSheet.Cells[j, 1] = ProcessedPartNumbers[i];
-                    //if (Parser.Family[i] != "Out of Bounds")
-                        workSheet.Cells[j, 2] = Parser.Family[i];
-                    //else
-                    //    workSheet.Cells[j, 2] = "null";
-                    
+                    workSheet.Cells[j, 2] = Parser.Family[i];
                     workSheet.Cells[j, 3] = Parser.Package[i];
                     if (Parser.PassiveComponents[i] != "Passive")
                         workSheet.Cells[j, 4] = "null"; 
@@ -446,17 +442,17 @@ namespace API_Digi_Key_Parser_new
                     cts.Cancel();
                     status = "Error";
                 }
-                catch(NullReferenceException ex)
+                catch(NullReferenceException)
                 {
                     ExFlag = true;
-                    textBox1.AppendText(Environment.NewLine + "Authorization error: The token is outdated" + ex.Message);
+                    textBox1.AppendText(Environment.NewLine + "Authorization error: The token is outdated");
                     cts.Cancel();
                     status = "Error";
                 }
                 catch(Exception ex)
                 {
                     ExFlag = true;
-                    textBox1.AppendText(Environment.NewLine + "Unhandled exception: Something went wrong" + ex.Message);
+                    textBox1.AppendText(Environment.NewLine + "Unhandled exception: Something went wrong " + ex.Message);
                     cts.Cancel();
                     status = "Error";
                 }
